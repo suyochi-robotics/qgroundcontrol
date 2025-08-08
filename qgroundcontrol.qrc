@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/json">
+    <qresource prefix="/">
         <file alias="ADSBVehicleManager.SettingsGroup.json">src/Settings/ADSBVehicleManager.SettingsGroup.json</file>
         <file alias="APMMavlinkStreamRate.SettingsGroup.json">src/Settings/APMMavlinkStreamRate.SettingsGroup.json</file>
         <file alias="App.SettingsGroup.json">src/Settings/App.SettingsGroup.json</file>
@@ -43,6 +43,7 @@
         <file alias="Vehicle/BatteryFact.json">src/Vehicle/FactGroups/BatteryFact.json</file>
         <file alias="Vehicle/ClockFact.json">src/Vehicle/FactGroups/ClockFact.json</file>
         <file alias="Vehicle/DistanceSensorFact.json">src/Vehicle/FactGroups/DistanceSensorFact.json</file>
+        <!--<file alias="Vehicle/FlowSensorFact.json">src/Vehicle/FactGroups/FlowSensorFact.json</file> -->
         <file alias="Vehicle/EscStatusFactGroup.json">src/Vehicle/FactGroups/EscStatusFactGroup.json</file>
         <file alias="Vehicle/EstimatorStatusFactGroup.json">src/Vehicle/FactGroups/EstimatorStatusFactGroup.json</file>
         <file alias="Vehicle/GPSFact.json">src/Vehicle/FactGroups/GPSFact.json</file>
