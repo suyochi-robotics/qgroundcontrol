@@ -10,5 +10,6 @@ qt_add_qml_module(MainWindowModule
     RESOURCE_PREFIX /qml
     QML_FILES
         MainWindow.qml
+        SensorPanel.qml
     NO_PLUGIN
 )
