@@ -878,7 +878,7 @@ ApplicationWindow {
                 visible: QGroundControl.multiVehicleManager.activeVehicle &&
                          QGroundControl.multiVehicleManager.activeVehicle.flowSensor
 
-                fact: QGroundControl.multiVehicleManager.activeVehicle.flowSensor.getFact("flowRate")
+                fact: QGroundControl.multiVehicleManager.activeVehicle&& QGroundControl.multiVehicleManager.activeVehicle.flowSensor?QGroundControl.multiVehicleManager.activeVehicle.flowSensor.getFact("flowRate"):null
             }
         }
 
