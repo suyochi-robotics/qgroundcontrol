@@ -14,6 +14,7 @@ import QtQuick.Layouts
 import QtQuick.Window
 
 import QGroundControl
+
 import QGroundControl.Controls
 import QGroundControl.FactControls
 import QGroundControl.ScreenTools
@@ -791,142 +792,142 @@ ApplicationWindow {
         anchors.margins: 20
     }*/
     //Testing custom window custom build
-    // Rectangle {
-    //     id: myMovablePanel
-    //     width: 300
-    //     height: 200
-    //     color: "#00000080"
-    //     radius: 8
-    //     border.color: "white"
-    //     border.width: 1
+    Rectangle {
+        id: myMovablePanel
+        width: 300
+        height: 200
+        color: "#00000080"
+        radius: 8
+        border.color: "white"
+        border.width: 1
 
-    //     MouseArea {
-    //         id: dragArea
-    //         anchors.fill: parent
-    //         drag.target: myMovablePanel
-    //         cursorShape: Qt.OpenHandCursor
-    //         onPressed: cursorShape = Qt.ClosedHandCursor
-    //         onReleased: cursorShape = Qt.OpenHandCursor
+        MouseArea {
+            id: dragArea
+            anchors.fill: parent
+            drag.target: myMovablePanel
+            cursorShape: Qt.OpenHandCursor
+            onPressed: cursorShape = Qt.ClosedHandCursor
+            onReleased: cursorShape = Qt.OpenHandCursor
+        }
+
+        Column {
+            id: contentColumn
+            anchors.fill: parent
+            anchors.margins: 12
+            spacing: 10
+
+            Row {
+                width: parent.width
+                spacing: 10
+
+                QGCLabel {
+                    text: "Panel Title"
+                    color: "white"
+                    font.pixelSize: Math.max(12, width * 0.04)
+                    wrapMode: Text.WordWrap
+                    Layout.fillWidth: true
+                }
+
+                Button {
+                    background: Rectangle { color: "transparent" }
+                    contentItem: Text {
+                        text: "✖"
+                        color: "white"
+                        font.pixelSize: 18
+                    }
+                    onClicked: visible = false
+                }
+            }
+
+            // ✅ Flow Rate Label
+            QGCLabel {
+                text: {
+                    const vehicle = QGroundControl.multiVehicleManager.activeVehicle;
+                    if (vehicle && vehicle.flowSensor) {
+                        const value = vehicle.flowSensor.getFact("flowRate").value;
+                        console.log("Flow Rate:", value);
+                        return "Flow Rate: " + value.toFixed(2) + " lpm";
+                    }
+                    return "Flow Rate: N/A";
+                }
+                color: "white"
+                wrapMode: Text.WordWrap
+                width: parent.width
+                font.pixelSize: Math.max(12, width * 0.04)
+            }
+
+            // ✅ Pulse Count Label
+            QGCLabel {
+                text: {
+                    const vehicle = QGroundControl.multiVehicleManager.activeVehicle;
+                    if (vehicle && vehicle.flowSensor) {
+                        const value = vehicle.flowSensor.getFact("pulseCount").value;
+                        console.log("Pulse Count:", value);
+                        return "Pulse Count: " + value;
+                    }
+                    return "Pulse Count: N/A";
+                }
+                color: "white"
+                wrapMode: Text.WordWrap
+                width: parent.width
+                font.pixelSize: Math.max(12, width * 0.04)
+            }
+
+            // Optional: Actual FactLabel for direct binding (for flowRate)
+            FactLabel {
+                visible: QGroundControl.multiVehicleManager.activeVehicle &&
+                         QGroundControl.multiVehicleManager.activeVehicle.flowSensor
+
+                fact: QGroundControl.multiVehicleManager.activeVehicle.flowSensor.getFact("flowRate")
+            }
+        }
+
+        // Rectangle {
+        //     id: resizeHandle
+        //     width: 16
+        //     height: 16
+        //     color: "white"
+        //     anchors.right: parent.right
+        //     anchors.bottom: parent.bottom
+
+        //     MouseArea {
+        //         anchors.fill: parent
+        //         cursorShape: Qt.SizeFDiagCursor
+
+        //         property real startWidth: 0
+        //         property real startHeight: 0
+        //         property real startX: 0
+        //         property real startY: 0
+
+        //         onPressed: {
+        //             startWidth = myMovablePanel.width
+        //             startHeight = myMovablePanel.height
+        //             startX = mouse.x
+        //             startY = mouse.y
+        //         }
+
+        //         onPositionChanged: {
+        //             myMovablePanel.width = Math.max(200, startWidth + (mouse.x - startX))
+        //             myMovablePanel.height = Math.max(150, startHeight + (mouse.y - startY))
+        //         }
+        //     }
+        // }
+    }
+
+    // Item {
+    //     width: 1280
+    //     height: 720
+
+    //     // Load your reusable panel!
+    //     SensorPanel {
+    //         id: mySensorPanel
+    //         anchors.centerIn: parent
     //     }
 
-    //     Column {
-    //         id: contentColumn
-    //         anchors.fill: parent
-    //         anchors.margins: 12
-    //         spacing: 10
-
-    //         Row {
-    //             width: parent.width
-    //             spacing: 10
-
-    //             QGCLabel {
-    //                 text: "Panel Title"
-    //                 color: "white"
-    //                 font.pixelSize: Math.max(12, myMovablePanel.width * 0.04)
-    //                 wrapMode: Text.WordWrap
-    //                 Layout.fillWidth: true
-    //             }
-
-    //             Button {
-    //                 background: Rectangle { color: "transparent" }
-    //                 contentItem: Text {
-    //                     text: "✖"
-    //                     color: "white"
-    //                     font.pixelSize: 18
-    //                 }
-    //                 onClicked: myMovablePanel.visible = false
-    //             }
-    //         }
-
-    //         // ✅ Flow Rate Label
-    //         QGCLabel {
-    //             text: {
-    //                 const vehicle = QGroundControl.multiVehicleManager.activeVehicle;
-    //                 if (vehicle && vehicle.flowSensor) {
-    //                     const value = vehicle.flowSensor.getFact("flowRate").value;
-    //                     console.log("Flow Rate:", value);
-    //                     return "Flow Rate: " + value.toFixed(2) + " lpm";
-    //                 }
-    //                 return "Flow Rate: N/A";
-    //             }
-    //             color: "white"
-    //             wrapMode: Text.WordWrap
-    //             width: parent.width
-    //             font.pixelSize: Math.max(12, myMovablePanel.width * 0.04)
-    //         }
-
-    //         // ✅ Pulse Count Label
-    //         QGCLabel {
-    //             text: {
-    //                 const vehicle = QGroundControl.multiVehicleManager.activeVehicle;
-    //                 if (vehicle && vehicle.flowSensor) {
-    //                     const value = vehicle.flowSensor.getFact("pulseCount").value;
-    //                     console.log("Pulse Count:", value);
-    //                     return "Pulse Count: " + value;
-    //                 }
-    //                 return "Pulse Count: N/A";
-    //             }
-    //             color: "white"
-    //             wrapMode: Text.WordWrap
-    //             width: parent.width
-    //             font.pixelSize: Math.max(12, myMovablePanel.width * 0.04)
-    //         }
-
-    //         // Optional: Actual FactLabel for direct binding (for flowRate)
-    //         FactLabel {
-    //             visible: QGroundControl.multiVehicleManager.activeVehicle &&
-    //                      QGroundControl.multiVehicleManager.activeVehicle.flowSensor
-
-    //             fact: QGroundControl.multiVehicleManager.activeVehicle.flowSensor.getFact("flowRate")
-    //         }
-    //     }
-
-    //     Rectangle {
-    //         id: resizeHandle
-    //         width: 16
-    //         height: 16
-    //         color: "white"
-    //         anchors.right: parent.right
-    //         anchors.bottom: parent.bottom
-
-    //         MouseArea {
-    //             anchors.fill: parent
-    //             cursorShape: Qt.SizeFDiagCursor
-
-    //             property real startWidth: 0
-    //             property real startHeight: 0
-    //             property real startX: 0
-    //             property real startY: 0
-
-    //             onPressed: {
-    //                 startWidth = myMovablePanel.width
-    //                 startHeight = myMovablePanel.height
-    //                 startX = mouse.x
-    //                 startY = mouse.y
-    //             }
-
-    //             onPositionChanged: {
-    //                 myMovablePanel.width = Math.max(200, startWidth + (mouse.x - startX))
-    //                 myMovablePanel.height = Math.max(150, startHeight + (mouse.y - startY))
-    //             }
-    //         }
+    //     // Optional: debug output on startup
+    //     Component.onCompleted: {
+    //         console.log("ActiveVehicle?", QGroundControl.multiVehicleManager.activeVehicle)
     //     }
     // }
-
-//     Item {
-//         width: 1280
-//         height: 720
-
-//         // Load your reusable panel!
-//         SensorPanel {
-//             id: mySensorPanel
-//             anchors.centerIn: parent
-//         }
-
-//         // Optional: debug output on startup
-//         Component.onCompleted: {
-//             console.log("ActiveVehicle?", QGroundControl.multiVehicleManager.activeVehicle)
-//         }
-//     }
 
  }

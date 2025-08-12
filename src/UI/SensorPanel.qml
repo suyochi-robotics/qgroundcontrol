@@ -74,12 +74,12 @@ Rectangle {
             color: "white"
         }
 
-        // FactLabel {
-        //     fact: QGroundControl.multiVehicleManager.activeVehicle && QGroundControl.multiVehicleManager.activeVehicle.flowSensor
-        //         ? QGroundControl.multiVehicleManager.activeVehicle.flowSensor.flowRate
-        //         : null
-        //     units: "lpm"
-        // }
+        FactLabel {
+            fact: QGroundControl.multiVehicleManager.activeVehicle && QGroundControl.multiVehicleManager.activeVehicle.flowSensor
+                ? QGroundControl.multiVehicleManager.activeVehicle.flowSensor.getFact("flowRate")
+                : null
+            // units: "lpm"
+        }
 
         // Example: Distance Sensors (multiple)
         Repeater {
