@@ -792,216 +792,152 @@ ApplicationWindow {
         anchors.margins: 20
     }*/
     //Testing custom window custom build
+    // ---- Flow Sensor Panel (drop-in) ----
     Rectangle {
         id: flowPanel
         width: 250
         height: 150
-        radius: 8
-        color: "#800000FF"            // translucent blue
+        color: "#800000FF"
         border.color: "white"
         border.width: 1
+        radius: 8
         visible: true
 
-        //
-        // --- Step 1: Always-present static values (safe fallback) ---
-        //
-        // These guarantee something is shown & logged even if Facts are null.
+        // Static fallback values
         property real staticFlowRate: 1.23
-        property int  staticPulseCount: 456
+        property int staticPulseCount: 456
 
-        //
-        // --- QGC vehicle & fact references (safe, null-checked) ---
-        //
-        // We keep these lightweight and pure-bindings so they auto-refresh when the
-        // active vehicle changes. No Connections needed.
-        property var activeVehicle: (QGroundControl
-                                     && QGroundControl.multiVehicleManager)
-                                    ? QGroundControl.multiVehicleManager.activeVehicle
-                                    : null
+        // Fact references
+        property var activeVehicle: null
+        property var flowRateFact: null
+        property var pulseCountFact: null
 
-        // Your custom FactGroup exposed on Vehicle as "flowSensor"
-        property var flowSensor: (activeVehicle && activeVehicle.flowSensor)
-                                 ? activeVehicle.flowSensor
-                                 : null
+        // Display strings
+        property string flowRateDisplay: staticFlowRate + " lpm"
+        property string pulseCountDisplay: staticPulseCount.toString()
 
-        // Facts from your VehicleFlowSensorFactGroup
-        property var flowRateFact:   flowSensor ? flowSensor.getFact("flowRate")   : null
-        property var pulseCountFact: flowSensor ? flowSensor.getFact("pulseCount") : null
+        // Dragging
+        property real dragStartX: 0
+        property real dragStartY: 0
 
-        //
-        // --- Derived values used by UI + logging (no Connections) ---
-        //
-        // These properties depend on fact.value; when it changes, the property
-        // changes too, which triggers the on<Prop>Changed handlers below => console logs.
-        property real flowRateValue: (flowRateFact
-                                      && typeof flowRateFact.value === "number"
-                                      && isFinite(flowRateFact.value))
-                                     ? flowRateFact.value
-                                     : staticFlowRate
-
-        property int pulseCountValue: (pulseCountFact
-                                       && typeof pulseCountFact.value === "number"
-                                       && isFinite(pulseCountFact.value))
-                                      ? Math.round(pulseCountFact.value)
-                                      : staticPulseCount
-
-        // Log when bindings re-point due to vehicle switch
-        onActiveVehicleChanged: {
-            console.log("[FlowPanel] activeVehicle changed ->",
-                        activeVehicle ? "non-null" : "null")
-        }
-        onFlowSensorChanged: {
-            console.log("[FlowPanel] flowSensor changed ->",
-                        flowSensor ? "non-null" : "null")
-        }
-
-        // Whenever the derived values change (incl. first bind), we log.
-        onFlowRateValueChanged: {
-            console.log("[FlowPanel] Flow Rate now:", flowRateValue, "lpm",
-                        "(src:", (flowRateFact ? "Fact" : "static"), ")")
-        }
-        onPulseCountValueChanged: {
-            console.log("[FlowPanel] Pulse Count now:", pulseCountValue,
-                        "(src:", (pulseCountFact ? "Fact" : "static"), ")")
-        }
-
-        // Initial log of the static values so you see them immediately at startup
-        Component.onCompleted: {
-            console.log("[FlowPanel] Initial static values — Flow rate:",
-                        staticFlowRate, "lpm, Pulse count:", staticPulseCount)
-        }
-
-        //
-        // --- Layout ---
-        //
         Column {
             anchors.fill: parent
-            anchors.margins: 10
-            spacing: 10
+            anchors.margins: 8
+            spacing: 8
 
-            // Title + close
             Row {
-                width: parent.width
                 spacing: 8
+                width: parent.width
 
                 Text {
                     text: "Flow Sensor"
-                    color: "white"
                     font.pixelSize: 18
-                    elide: Text.ElideRight
+                    color: "white"
+                    font.bold: true
                 }
 
-                // Spacer pushes the close button to the right edge
-                Item { Layout.fillWidth: true; width: 1; height: 1 }
+                Item { width: 1; height: 1; Layout.fillWidth: true }
 
-                // Close button pinned at the right side of the title row
                 Button {
                     id: closeBtn
                     text: "✖"
                     font.pixelSize: 14
                     background: Rectangle { color: "transparent" }
                     onClicked: flowPanel.visible = false
-                    accessible.name: "Close Flow Sensor Panel"
-                    width: 28; height: 28
+                    width: 28
+                    height: 28
                 }
             }
 
-            // NOTE: We intentionally use plain Text so we can show values even if Facts are null.
-            // If you prefer a QGC control, you can swap to:
-            //   FactLabel { fact: flowRateFact; prefix: "Flow Rate: "; suffix: " lpm" }
-            // but we keep Text to guarantee display with static fallback.
+            Rectangle {
+                width: parent.width
+                height: 1
+                color: "white"
+                opacity: 0.3
+            }
+
             Text {
                 id: flowRateText
-                text: "Flow Rate: " + (Number(flowRateValue).toFixed(2)) + " lpm"
-                color: "white"
+                text: "Flow Rate: " + flowRateDisplay
                 font.pixelSize: 16
-                // Log whenever the rendered text changes (extra safety)
-                onTextChanged: console.log("[FlowPanel] UI updated ->", text)
+                color: "white"
             }
 
             Text {
                 id: pulseCountText
-                text: "Pulse Count: " + pulseCountValue
-                color: "white"
+                text: "Pulse Count: " + pulseCountDisplay
                 font.pixelSize: 16
-                onTextChanged: console.log("[FlowPanel] UI updated ->", text)
+                color: "white"
             }
         }
 
-        //
-        // --- Move (whole panel is draggable) ---
-        //
-        property real _pressX: 0
-        property real _pressY: 0
-
-        function _onPanelPressed(mouse) {
-            _pressX = mouse.x
-            _pressY = mouse.y
-            console.log("[FlowPanel] drag press at", _pressX, _pressY)
-        }
-        function _onPanelPositionChanged(mouse) {
-            // Let built-in drag handle position; we just log if you want:
-            // console.log("[FlowPanel] dragging …", flowPanel.x, flowPanel.y)
-        }
-        function _onPanelReleased(mouse) {
-            console.log("[FlowPanel] drag release at", flowPanel.x, flowPanel.y)
-        }
-
         MouseArea {
-            id: dragArea
             anchors.fill: parent
-            cursorShape: Qt.OpenHandCursor
             drag.target: flowPanel
-            onPressed:    (mouse) => { flowPanel._onPanelPressed(mouse); cursorShape = Qt.ClosedHandCursor }
-            onPositionChanged: (mouse) => flowPanel._onPanelPositionChanged(mouse)
-            onReleased:   (mouse) => { flowPanel._onPanelReleased(mouse); cursorShape = Qt.OpenHandCursor }
+            onPressed: {
+                flowPanel.dragStartX = mouse.x
+                flowPanel.dragStartY = mouse.y
+            }
         }
 
-        //
-        // --- Resize handle (bottom-right) ---
-        //
         Rectangle {
             id: resizeHandle
             width: 16
             height: 16
-            radius: 3
             color: "white"
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            border.color: "#33000000"
-
-            property real _startW: 0
-            property real _startH: 0
-            property real _startX: 0
-            property real _startY: 0
-
-            function _onResizePressed(mouse) {
-                _startW = flowPanel.width
-                _startH = flowPanel.height
-                _startX = mouse.x
-                _startY = mouse.y
-                console.log("[FlowPanel] resize press at", _startX, _startY,
-                            "start size", _startW, "x", _startH)
-            }
-            function _onResizeMoved(mouse) {
-                flowPanel.width  = Math.max(150, _startW + (mouse.x - _startX))
-                flowPanel.height = Math.max(100, _startH + (mouse.y - _startY))
-                // console.log("[FlowPanel] resizing …", flowPanel.width, "x", flowPanel.height)
-            }
-            function _onResizeReleased(mouse) {
-                console.log("[FlowPanel] resize release size",
-                            flowPanel.width, "x", flowPanel.height)
-            }
-
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.SizeFDiagCursor
-                onPressed:          (mouse) => resizeHandle._onResizePressed(mouse)
-                onPositionChanged:  (mouse) => resizeHandle._onResizeMoved(mouse)
-                onReleased:         (mouse) => resizeHandle._onResizeReleased(mouse)
+                onPositionChanged: {
+                    flowPanel.width = Math.max(150, flowPanel.width + mouse.x)
+                    flowPanel.height = Math.max(100, flowPanel.height + mouse.y)
+                }
+            }
+        }
+
+        Component.onCompleted: updateFacts()
+
+        Connections {
+            target: QGroundControl.multiVehicleManager
+            function onActiveVehicleChanged() {
+                console.log("[FlowPanel] Active vehicle changed")
+                updateFacts()
+            }
+        }
+
+        function updateFacts() {
+            activeVehicle = QGroundControl.multiVehicleManager.activeVehicle
+            if (activeVehicle && activeVehicle.flowSensor) {
+                flowRateFact = activeVehicle.flowSensor.getFact("flowRate")
+                pulseCountFact = activeVehicle.flowSensor.getFact("pulseCount")
+
+                if (flowRateFact) {
+                    flowRateDisplay = flowRateFact.valueString + " lpm"
+                    flowRateFact.valueChanged.connect(function() {
+                        flowRateDisplay = flowRateFact.valueString + " lpm"
+                        console.log("[FlowPanel] flowRateFact updated:", flowRateDisplay)
+                    })
+                }
+
+                if (pulseCountFact) {
+                    pulseCountDisplay = pulseCountFact.valueString
+                    pulseCountFact.valueChanged.connect(function() {
+                        pulseCountDisplay = pulseCountFact.valueString
+                        console.log("[FlowPanel] pulseCountFact updated:", pulseCountDisplay)
+                    })
+                }
+            } else {
+                console.log("[FlowPanel] No active vehicle — showing static values")
+                flowRateFact = null
+                pulseCountFact = null
+                flowRateDisplay = staticFlowRate + " lpm"
+                pulseCountDisplay = staticPulseCount.toString()
             }
         }
     }
+
     // Item {
     //     width: 1280
     //     height: 720
