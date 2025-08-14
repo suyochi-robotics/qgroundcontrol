@@ -795,48 +795,220 @@ ApplicationWindow {
     // ---- Flow Sensor Panel (drop-in) ----
     Rectangle {
         id: flowPanel
-        width: 240
-        height: 110
-        color: "#800000FF"
+        width: 260
+        height: 120
+        color: "#800000FF"                  // translucent blue
         radius: 8
         border.color: "white"
         border.width: 1
+        visible: true
 
-        // Safe getter
-        function readFactValue(factName) {
-            let v = QGroundControl.multiVehicleManager.activeVehicle
-            if (v && v.flowSensor) {
-                let fact = v.flowSensor.getFact(factName)
-                if (fact) {
-                    return fact.value
-                }
+        //
+        // --- Helpers (no long-lived Fact refs) ---
+        //
+        function currentVehicle() {
+            try {
+                return QGroundControl && QGroundControl.multiVehicleManager
+                       ? QGroundControl.multiVehicleManager.activeVehicle
+                       : null
+            } catch(e) {
+                return null
             }
-            return "null"
         }
 
+        function resolveFact(name) {
+            // Look up *fresh* each time to avoid stale pointers
+            const v = currentVehicle()
+            if (!v || !v.flowSensor) return null
+            try { return v.flowSensor.getFact(name) } catch(e) { return null }
+        }
+
+        // Subscribe to a Fact's valueChanged safely, and auto-unsubscribe on destroyed
+        function subscribeToFact(name, onUpdate /* function(val) {} */) {
+            const fact = resolveFact(name)
+            if (!fact) { onUpdate(null); return { dispose: function(){} } }
+
+            // Initial push (safe; if it dies after this, we only use the copy)
+            try {
+                onUpdate(fact.value)
+            } catch(e) {
+                onUpdate(null)
+            }
+
+            // Handlers with formal parameters (avoids "parameter injection deprecated" warning)
+            function valueChangedHandler(newVal) {
+                try { onUpdate(newVal) } catch(e) { /* ignore */ }
+            }
+            function destroyedHandler(/*obj*/) {
+                // On destruction, stop listening and null the display
+                try { fact.valueChanged.disconnect(valueChangedHandler) } catch(e) {}
+                try { fact.destroyed.disconnect(destroyedHandler) } catch(e) {}
+                try { onUpdate(null) } catch(e) {}
+            }
+
+            // Connect without using <Connections>
+            try { fact.valueChanged.connect(valueChangedHandler) } catch(e) {}
+            try { fact.destroyed.connect(destroyedHandler) } catch(e) {}
+
+            // Give back a disposer so we can tear down when vehicle changes
+            return {
+                dispose: function() {
+                    try { fact.valueChanged.disconnect(valueChangedHandler) } catch(e) {}
+                    try { fact.destroyed.disconnect(destroyedHandler) } catch(e) {}
+                }
+            }
+        }
+
+        // Re-subscribe when active vehicle swaps (again, no <Connections>)
+        function resubscribeAll() {
+            // Tear down old subscriptions if any
+            if (flowRateSub) { try { flowRateSub.dispose() } catch(e) {} flowRateSub = null }
+            if (pulseCountSub) { try { pulseCountSub.dispose() } catch(e) {} pulseCountSub = null }
+
+            // Re-wire with fresh Fact objects (or null -> shows static/null)
+            flowRateSub  = subscribeToFact("flowRate", function (val) {
+                // Show null exactly if missing; otherwise format to 2 decimals
+                if (val === null || val === undefined) {
+                    flowRateText.text = "Flow Rate: null"
+                    console.log("[FlowPanel] Flow Rate: null")
+                } else {
+                    const n = Number(val)
+                    const s = isFinite(n) ? n.toFixed(2) : String(val)
+                    flowRateText.text = "Flow Rate: " + s + " lpm"
+                    console.log("[FlowPanel] Flow Rate:", s, "lpm")
+                }
+            })
+
+            pulseCountSub = subscribeToFact("pulseCount", function (val) {
+                if (val === null || val === undefined) {
+                    pulseCountText.text = "Pulse Count: null"
+                    console.log("[FlowPanel] Pulse Count: null")
+                } else {
+                    const n = Number(val)
+                    const s = isFinite(n) ? n.toFixed(0) : String(val)
+                    pulseCountText.text = "Pulse Count: " + s
+                    console.log("[FlowPanel] Pulse Count:", s)
+                }
+            })
+        }
+
+        // Keep references to our active subscriptions
+        property var flowRateSub:  null
+        property var pulseCountSub: null
+
+        //
+        // --- UI ---
+        //
+        // Drag anywhere
         MouseArea {
             anchors.fill: parent
             drag.target: flowPanel
+            onPressed: function(mouse) {
+                // just to prove handler fires
+                // console.log("[FlowPanel] Drag start at", mouse.x, mouse.y)
+            }
         }
 
         Column {
-            anchors.centerIn: parent
-            spacing: 6
+            anchors.fill: parent
+            anchors.margins: 10
+            spacing: 8
 
+            Row {
+                width: parent.width
+                spacing: 8
+
+                Text {
+                    text: "Flow Sensor"
+                    color: "white"
+                    font.pixelSize: 18
+                }
+
+                // working close button at the right side
+                // Item {
+                    // anchors.horizontalStretch: 1
+
+                // }   // spacer
+                Button {
+                    id: closeBtn
+                    text: "✖"
+                    font.pixelSize: 14
+                    background: Rectangle { color: "transparent" }
+                    width: 28; height: 28
+                    onClicked: function() {
+                        console.log("[FlowPanel] Close clicked")
+                        flowPanel.visible = false
+                    }
+                }
+            }
+
+            // Static first; will be updated by subscriptions
             Text {
                 id: flowRateText
+                text: "Flow Rate: 12.34 lpm"
                 color: "white"
                 font.pixelSize: 16
-                text: "Flow Rate: " + flowPanel.readFactValue("flowRate")
-                onTextChanged: console.log("[FlowPanel]", text)
+                onTextChanged: function() { console.log("[FlowPanel]", flowRateText.text) }
             }
 
             Text {
                 id: pulseCountText
+                text: "Pulse Count: 567"
                 color: "white"
                 font.pixelSize: 16
-                text: "Pulse Count: " + flowPanel.readFactValue("pulseCount")
-                onTextChanged: console.log("[FlowPanel]", text)
+                onTextChanged: function() { console.log("[FlowPanel]", pulseCountText.text) }
+            }
+        }
+
+        // === Lifecycle wiring (without <Connections>) ===
+        Component.onCompleted: function() {
+            console.log("[FlowPanel] Mounted; subscribing")
+            resubscribeAll()
+
+            // Watch activeVehicle changes and re-subscribe
+            try {
+                if (QGroundControl && QGroundControl.multiVehicleManager) {
+                    QGroundControl.multiVehicleManager.activeVehicleChanged.connect(function() {
+                        console.log("[FlowPanel] activeVehicleChanged -> re-subscribe")
+                        resubscribeAll()
+                    })
+                }
+            } catch(e) {
+                console.log("[FlowPanel] Could not hook activeVehicleChanged:", e)
+            }
+        }
+
+        Component.onDestruction: function() {
+            if (flowRateSub)  { try { flowRateSub.dispose() } catch(e) {} }
+            if (pulseCountSub){ try { pulseCountSub.dispose() } catch(e) {} }
+        }
+
+        // Simple resize handle (bottom-right)
+        Rectangle {
+            id: resizeHandle
+            width: 16; height: 16
+            radius: 3
+            color: "white"
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.SizeFDiagCursor
+                property real startW
+                property real startH
+                property real startX
+                property real startY
+                onPressed: function(mouse) {
+                    startW = flowPanel.width
+                    startH = flowPanel.height
+                    startX = mouse.x
+                    startY = mouse.y
+                }
+                onPositionChanged: function(mouse) {
+                    flowPanel.width  = Math.max(200, startW + (mouse.x - startX))
+                    flowPanel.height = Math.max(120, startH + (mouse.y - startY))
+                }
             }
         }
     }
