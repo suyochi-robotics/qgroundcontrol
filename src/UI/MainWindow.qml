@@ -914,7 +914,7 @@ ApplicationWindow {
             anchors.margins: 10
             spacing: 8
 
-            Row {
+            RowLayout {
                 width: parent.width
                 spacing: 8
 
@@ -924,11 +924,8 @@ ApplicationWindow {
                     font.pixelSize: 18
                 }
 
-                // working close button at the right side
-                // Item {
-                    // anchors.horizontalStretch: 1
+                Item { Layout.fillWidth: true } // pushes button to the right
 
-                // }   // spacer
                 Button {
                     id: closeBtn
                     text: "✖"
