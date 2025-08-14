@@ -795,149 +795,54 @@ ApplicationWindow {
     // ---- Flow Sensor Panel (drop-in) ----
     Rectangle {
         id: flowPanel
-        width: 250
-        height: 150
-        color: "#800000FF"
+        width: 240
+        height: 110
+        color: "#800000FF"   // translucent blue
+        radius: 8
         border.color: "white"
         border.width: 1
-        radius: 8
-        visible: true
 
-        // Static fallback values
-        property real staticFlowRate: 1.23
-        property int staticPulseCount: 456
-
-        // Fact references
-        property var activeVehicle: null
-        property var flowRateFact: null
-        property var pulseCountFact: null
-
-        // Display strings
-        property string flowRateDisplay: staticFlowRate + " lpm"
-        property string pulseCountDisplay: staticPulseCount.toString()
-
-        // Dragging
-        property real dragStartX: 0
-        property real dragStartY: 0
+        // Drag capability
+        MouseArea {
+            anchors.fill: parent
+            drag.target: flowPanel
+        }
 
         Column {
-            anchors.fill: parent
-            anchors.margins: 8
-            spacing: 8
-
-            Row {
-                spacing: 8
-                width: parent.width
-
-                Text {
-                    text: "Flow Sensor"
-                    font.pixelSize: 18
-                    color: "white"
-                    font.bold: true
-                }
-
-                Item { width: 1; height: 1; Layout.fillWidth: true }
-
-                Button {
-                    id: closeBtn
-                    text: "✖"
-                    font.pixelSize: 14
-                    background: Rectangle { color: "transparent" }
-                    onClicked: flowPanel.visible = false
-                    width: 28
-                    height: 28
-                }
-            }
-
-            Rectangle {
-                width: parent.width
-                height: 1
-                color: "white"
-                opacity: 0.3
-            }
+            anchors.centerIn: parent
+            spacing: 5
 
             Text {
                 id: flowRateText
-                text: "Flow Rate: " + flowRateDisplay
-                font.pixelSize: 16
+                text: {
+                    let v = QGroundControl.multiVehicleManager.activeVehicle
+                    if (v && v.flowSensor) {
+                        let val = v.flowSensor.getFact("flowRate").value
+                        console.log("Flow Rate:", val)
+                        return "Flow Rate: " + val
+                    }
+                    return "Flow Rate: null"
+                }
                 color: "white"
+                font.pixelSize: 16
             }
 
             Text {
                 id: pulseCountText
-                text: "Pulse Count: " + pulseCountDisplay
-                font.pixelSize: 16
+                text: {
+                    let v = QGroundControl.multiVehicleManager.activeVehicle
+                    if (v && v.flowSensor) {
+                        let val = v.flowSensor.getFact("pulseCount").value
+                        console.log("Pulse Count:", val)
+                        return "Pulse Count: " + val
+                    }
+                    return "Pulse Count: null"
+                }
                 color: "white"
-            }
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            drag.target: flowPanel
-            onPressed: {
-                flowPanel.dragStartX = mouse.x
-                flowPanel.dragStartY = mouse.y
-            }
-        }
-
-        Rectangle {
-            id: resizeHandle
-            width: 16
-            height: 16
-            color: "white"
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.SizeFDiagCursor
-                onPositionChanged: {
-                    flowPanel.width = Math.max(150, flowPanel.width + mouse.x)
-                    flowPanel.height = Math.max(100, flowPanel.height + mouse.y)
-                }
-            }
-        }
-
-        Component.onCompleted: updateFacts()
-
-        Connections {
-            target: QGroundControl.multiVehicleManager
-            function onActiveVehicleChanged() {
-                console.log("[FlowPanel] Active vehicle changed")
-                updateFacts()
-            }
-        }
-
-        function updateFacts() {
-            activeVehicle = QGroundControl.multiVehicleManager.activeVehicle
-            if (activeVehicle && activeVehicle.flowSensor) {
-                flowRateFact = activeVehicle.flowSensor.getFact("flowRate")
-                pulseCountFact = activeVehicle.flowSensor.getFact("pulseCount")
-
-                if (flowRateFact) {
-                    flowRateDisplay = flowRateFact.valueString + " lpm"
-                    flowRateFact.valueChanged.connect(function() {
-                        flowRateDisplay = flowRateFact.valueString + " lpm"
-                        console.log("[FlowPanel] flowRateFact updated:", flowRateDisplay)
-                    })
-                }
-
-                if (pulseCountFact) {
-                    pulseCountDisplay = pulseCountFact.valueString
-                    pulseCountFact.valueChanged.connect(function() {
-                        pulseCountDisplay = pulseCountFact.valueString
-                        console.log("[FlowPanel] pulseCountFact updated:", pulseCountDisplay)
-                    })
-                }
-            } else {
-                console.log("[FlowPanel] No active vehicle — showing static values")
-                flowRateFact = null
-                pulseCountFact = null
-                flowRateDisplay = staticFlowRate + " lpm"
-                pulseCountDisplay = staticPulseCount.toString()
+                font.pixelSize: 16
             }
         }
     }
-
     // Item {
     //     width: 1280
     //     height: 720
