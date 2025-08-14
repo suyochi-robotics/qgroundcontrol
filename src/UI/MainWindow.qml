@@ -793,125 +793,85 @@ ApplicationWindow {
     }*/
     //Testing custom window custom build
     Rectangle {
-        id: myMovablePanel
-        width: 300
-        height: 200
-        color: "#00000080"
-        radius: 8
+        id: flowPanel
+        width: 250
+        height: 150
+        color: "#800000FF" // translucent blue
         border.color: "white"
         border.width: 1
+        radius: 8
+        visible: true
 
-        MouseArea {
-            id: dragArea
-            anchors.fill: parent
-            drag.target: myMovablePanel
-            cursorShape: Qt.OpenHandCursor
-            onPressed: cursorShape = Qt.ClosedHandCursor
-            onReleased: cursorShape = Qt.OpenHandCursor
-        }
+        // Static Step 1 values
+        property real flowRate: 1.23
+        property int pulseCount: 456
+
+        // Track dragging
+        property real dragStartX
+        property real dragStartY
 
         Column {
-            id: contentColumn
             anchors.fill: parent
-            anchors.margins: 12
-            spacing: 10
+            anchors.margins: 8
+            spacing: 8
 
             Row {
-                width: parent.width
-                spacing: 10
-
-                QGCLabel {
-                    text: "Panel Title"
+                spacing: 8
+                Text {
+                    text: "Flow Sensor"
+                    font.pixelSize: 18
                     color: "white"
-                    font.pixelSize: Math.max(12, width * 0.04)
-                    wrapMode: Text.WordWrap
-                    Layout.fillWidth: true
                 }
-
                 Button {
+                    text: "✖"
+                    font.pixelSize: 14
                     background: Rectangle { color: "transparent" }
-                    contentItem: Text {
-                        text: "✖"
-                        color: "white"
-                        font.pixelSize: 18
-                    }
-                    onClicked: visible = false
+                    onClicked: flowPanel.visible = false
                 }
             }
 
-            // ✅ Flow Rate Label
-            QGCLabel {
-                text: {
-                    const vehicle = QGroundControl.multiVehicleManager.activeVehicle;
-                    if (vehicle && vehicle.flowSensor) {
-                        const value = vehicle.flowSensor.getFact("flowRate").value;
-                        console.log("Flow Rate:", value);
-                        return "Flow Rate: " + value.toFixed(2) + " lpm";
-                    }
-                    return "Flow Rate: N/A";
-                }
+            Text {
+                text: "Flow Rate: " + flowPanel.flowRate + " lpm"
+                font.pixelSize: 16
                 color: "white"
-                wrapMode: Text.WordWrap
-                width: parent.width
-                font.pixelSize: Math.max(12, width * 0.04)
             }
-
-            // ✅ Pulse Count Label
-            QGCLabel {
-                text: {
-                    const vehicle = QGroundControl.multiVehicleManager.activeVehicle;
-                    if (vehicle && vehicle.flowSensor) {
-                        const value = vehicle.flowSensor.getFact("pulseCount").value;
-                        console.log("Pulse Count:", value);
-                        return "Pulse Count: " + value;
-                    }
-                    return "Pulse Count: N/A";
-                }
+            Text {
+                text: "Pulse Count: " + flowPanel.pulseCount
+                font.pixelSize: 16
                 color: "white"
-                wrapMode: Text.WordWrap
-                width: parent.width
-                font.pixelSize: Math.max(12, width * 0.04)
-            }
-
-            // Optional: Actual FactLabel for direct binding (for flowRate)
-            FactLabel {
-                visible: QGroundControl.multiVehicleManager.activeVehicle &&
-                         QGroundControl.multiVehicleManager.activeVehicle.flowSensor
-
-                fact: QGroundControl.multiVehicleManager.activeVehicle&& QGroundControl.multiVehicleManager.activeVehicle.flowSensor?QGroundControl.multiVehicleManager.activeVehicle.flowSensor.getFact("flowRate"):null
             }
         }
 
-        // Rectangle {
-        //     id: resizeHandle
-        //     width: 16
-        //     height: 16
-        //     color: "white"
-        //     anchors.right: parent.right
-        //     anchors.bottom: parent.bottom
+        MouseArea {
+            anchors.fill: parent
+            drag.target: flowPanel
+            onPressed: {
+                dragStartX = mouse.x
+                dragStartY = mouse.y
+            }
+        }
 
-        //     MouseArea {
-        //         anchors.fill: parent
-        //         cursorShape: Qt.SizeFDiagCursor
+        // Resize handle
+        Rectangle {
+            id: resizeHandle
+            width: 16
+            height: 16
+            color: "white"
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.SizeFDiagCursor
+                onPositionChanged: {
+                    flowPanel.width = Math.max(150, flowPanel.width + mouse.x)
+                    flowPanel.height = Math.max(100, flowPanel.height + mouse.y)
+                }
+            }
+        }
 
-        //         property real startWidth: 0
-        //         property real startHeight: 0
-        //         property real startX: 0
-        //         property real startY: 0
-
-        //         onPressed: {
-        //             startWidth = myMovablePanel.width
-        //             startHeight = myMovablePanel.height
-        //             startX = mouse.x
-        //             startY = mouse.y
-        //         }
-
-        //         onPositionChanged: {
-        //             myMovablePanel.width = Math.max(200, startWidth + (mouse.x - startX))
-        //             myMovablePanel.height = Math.max(150, startHeight + (mouse.y - startY))
-        //         }
-        //     }
-        // }
+        Component.onCompleted: {
+            console.log("[FlowPanel] Initial load — Flow rate:", flowRate, "lpm, Pulse count:", pulseCount)
+        }
     }
 
     // Item {
