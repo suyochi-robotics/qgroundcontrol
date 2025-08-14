@@ -797,12 +797,23 @@ ApplicationWindow {
         id: flowPanel
         width: 240
         height: 110
-        color: "#800000FF"   // translucent blue
+        color: "#800000FF"
         radius: 8
         border.color: "white"
         border.width: 1
 
-        // Drag capability
+        // Safe getter
+        function readFactValue(factName) {
+            let v = QGroundControl.multiVehicleManager.activeVehicle
+            if (v && v.flowSensor) {
+                let fact = v.flowSensor.getFact(factName)
+                if (fact) {
+                    return fact.value
+                }
+            }
+            return "null"
+        }
+
         MouseArea {
             anchors.fill: parent
             drag.target: flowPanel
@@ -810,36 +821,22 @@ ApplicationWindow {
 
         Column {
             anchors.centerIn: parent
-            spacing: 5
+            spacing: 6
 
             Text {
                 id: flowRateText
-                text: {
-                    let v = QGroundControl.multiVehicleManager.activeVehicle
-                    if (v && v.flowSensor) {
-                        let val = v.flowSensor.getFact("flowRate").value
-                        console.log("Flow Rate:", val)
-                        return "Flow Rate: " + val
-                    }
-                    return "Flow Rate: null"
-                }
                 color: "white"
                 font.pixelSize: 16
+                text: "Flow Rate: " + flowPanel.readFactValue("flowRate")
+                onTextChanged: console.log("[FlowPanel]", text)
             }
 
             Text {
                 id: pulseCountText
-                text: {
-                    let v = QGroundControl.multiVehicleManager.activeVehicle
-                    if (v && v.flowSensor) {
-                        let val = v.flowSensor.getFact("pulseCount").value
-                        console.log("Pulse Count:", val)
-                        return "Pulse Count: " + val
-                    }
-                    return "Pulse Count: null"
-                }
                 color: "white"
                 font.pixelSize: 16
+                text: "Pulse Count: " + flowPanel.readFactValue("pulseCount")
+                onTextChanged: console.log("[FlowPanel]", text)
             }
         }
     }
