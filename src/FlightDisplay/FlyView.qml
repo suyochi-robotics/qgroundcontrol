@@ -177,6 +177,73 @@ Item {
             id: viewer3DWindow
             anchors.fill: parent
         }
+        Item {
+            id: _overlay
+            anchors.fill: parent
+
+            // === Your Flow Sensor Panel ===
+            Rectangle {
+                id: flowPanel
+                width: 240
+                height: 110
+                color: "#800000FF"
+                radius: 8
+                border.color: "white"
+                border.width: 1
+                anchors.margins: 10
+                anchors.left: parent.left
+                anchors.top: parent.top
+
+                property int precision: 2
+
+                function readFactValue(factName, precision) {
+                    try {
+                        let v = QGroundControl.multiVehicleManager.activeVehicle
+                        if (!v) {
+                            console.log("[FlowPanel] No active vehicle")
+                            return "null"
+                        }
+                        if (v.flowSensor) {
+                            let fact = v.flowSensor.getFact(factName)
+                            if (fact) {
+                                return fact.value.toFixed(precision)
+                            }
+                        }
+                    } catch (err) {
+                        console.log("[FlowPanel] Error:", err)
+                    }
+                    return "null"
+                }
+
+                Column {
+                    anchors.centerIn: parent
+                    spacing: 6
+                    Text {
+                        id: flowRateText
+                        color: "white"
+                        font.pixelSize: 16
+                        text: "Flow Rate: -"
+                    }
+                    Text {
+                        id: pulseCountText
+                        color: "white"
+                        font.pixelSize: 16
+                        text: "Pulse Count: -"
+                    }
+                }
+
+                Component.onCompleted: {
+                    var v = QGroundControl.multiVehicleManager.activeVehicle
+                    console.log("[FlowPanel] onCompleted, activeVehicle:", v)         // will be null or object
+                    if (v) {
+                        console.log("[FlowPanel] has flowSensor property:", !!v.flowSensor)
+                        if (v.flowSensor) {
+                            var f = v.flowSensor.getFact("flowRate")
+                            console.log("[FlowPanel] flowRate fact:", f)
+                            if (f) console.log("  value:", f.value, "valueString:", f.valueString)
+                        }
+                    }
+                }
     }
 
     UTMSPActivationStatusBar {
@@ -188,5 +255,8 @@ Item {
         function onActivationTriggered(value) {
             _root.utmspSendActTrigger = value
         }
+    }
+}
+
     }
 }
