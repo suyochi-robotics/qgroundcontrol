@@ -19,6 +19,7 @@ qt_add_qml_module(ToolbarModule
         RCRSSIIndicator.qml
         RemoteIDIndicator.qml
         FlowIndicator.qml
+        FlowIndicatorPage.qml
         RTKGPSIndicator.qml
         TelemetryRSSIIndicator.qml
         VehicleGPSIndicator.qml
