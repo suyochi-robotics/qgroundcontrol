@@ -32,7 +32,7 @@ Item {
             width:              height
             anchors.top:        parent.top
             anchors.bottom:     parent.bottom
-            source:             "/qmlimages/flow.svg"
+            source:             "/qmlimages/obs_distance.svg"
             fillMode:           Image.PreserveAspectFit
             sourceSize.height:  height
             opacity:            _activeVehicle ? 1 : 0.5
@@ -45,31 +45,32 @@ Item {
             visible:                true   // later bind to sensor available
             spacing:                0
 
-           QGCLabel {
-               anchors.horizontalCenter: flowValue.horizontalCenter
-               color: qgcPal.buttonText
-               text: _activeVehicle
-                     ? _activeVehicle.flowSensor.getFact("flowRate").value.toFixed(2)
-                     : ""
-            }
-
             QGCLabel {
-               id: flowValue
-               color: qgcPal.buttonText
-               text: _activeVehicle
-                     ? _activeVehicle.flowSensor.getFact("pulseCount").value.toFixed(0):""
+                text: _activeVehicle
+                      ? _activeVehicle.distanceSensor.getFact("rotationNone").value.toFixed(2) + " m (Forward)"
+                      : "--"
+            }
+            QGCLabel {
+                text: _activeVehicle
+                      ? _activeVehicle.distanceSensor.getFact("rotationYaw180").value.toFixed(2) + " m (Rear)"
+                      : "--"
+            }
+            QGCLabel {
+                text: _activeVehicle
+                      ? _activeVehicle.distanceSensor.getFact("rotationPitch270").value.toFixed(2) + " m (Down)"
+                      : "--"
             }
         }
     }
 
     MouseArea {
         anchors.fill:   parent
-        onClicked:      mainWindow.showIndicatorDrawer(flowIndicatorPage, control)
+        onClicked:      mainWindow.showIndicatorDrawer(distanceIndicatorPage, control)
     }
 
     Component {
-        id: flowIndicatorPage
+        id: distanceIndicatorPage
 
-        FlowIndicatorPage { }
+        DistanceIndicatorPage { }
     }
 }

@@ -20,17 +20,22 @@ ToolIndicatorPage {
                 heading: qsTr(" Flow Sensor Status")
 
                 LabelledLabel {
-                    label:      qsTr("Flow Rate")
-                    labelText:  _activeVehicle
-                                ? _activeVehicle.flowSensor.getFact("flowRate").value.toFixed(2)
-                                : ""
+                    label:      qsTr("Forward")
+                    labelText:  activeVehicle
+                                ? _activeVehicle.distanceSensor.getFact("rotationNone").value.toFixed(2) + " m (Forward)"
+                                : "--"
                 }
-
                 LabelledLabel {
-                    label:      qsTr("Pulse Count")
+                    label:      qsTr("Backward")
                     labelText:  _activeVehicle
-                                ? _activeVehicle.flowSensor.getFact("pulseCount").value.toFixed(0)
-                                : ""          // placeholder
+                                ? _activeVehicle.distanceSensor.getFact("rotationYaw180").value.toFixed(2) + " m (Rear)"
+                                : "--"
+                }
+                LabelledLabel {
+                    label:      qsTr("Terrain")
+                    labelText:  _activeVehicle
+                                ? _activeVehicle.distanceSensor.getFact("rotationPitch270").value.toFixed(2) + " m (Down)"
+                                : "--"          // placeholder
                 }
 
 
@@ -40,10 +45,10 @@ ToolIndicatorPage {
 
     expandedComponent: Component {
         SettingsGroupLayout {
-            heading: qsTr("Flow Settings")
+            heading: qsTr("Distance Sensor Settings")
 
             QGCLabel {
-                text: qsTr("Additional flow sensor settings go here")
+                text: qsTr("Additional Distance sensor settings go here")
             }
         }
     }

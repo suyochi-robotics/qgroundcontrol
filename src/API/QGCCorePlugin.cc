@@ -308,6 +308,7 @@ const QVariantList &QGCCorePlugin::toolBarIndicators()
         {
             QVariant::fromValue(QUrl::fromUserInput(QStringLiteral("qrc:/qml/QGroundControl/Toolbar/RTKGPSIndicator.qml"))),
             QVariant::fromValue(QUrl::fromUserInput(QStringLiteral("qrc:/qml/QGroundControl/Toolbar/FlowIndicator.qml"))),
+            QVariant::fromValue(QUrl::fromUserInput(QStringLiteral("qrc:/qml/QGroundControl/Toolbar/DistanceIndicator.qml"))),
         }
     );
 
