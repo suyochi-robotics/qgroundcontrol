@@ -5,36 +5,7 @@ import QGroundControl
 import QGroundControl.Controls
 import QGroundControl.ScreenTools
 
-// Item {
-//     id: control
-//     width: flowIcon.width
-//     height: flowIcon.height
 
-//     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
-
-//     signal clicked   // standard
-
-//     QGCColoredImage {
-//         id: flowIcon
-//         source: "/qmlimages/flow.svg"   // use qrc so it's packaged
-//         width: ScreenTools.defaultFontPixelHeight * 1.2
-//         height: width
-//         fillMode: Image.PreserveAspectFit
-//         opacity: _activeVehicle ? 1 : 0.5
-//         color: qgcPal.buttonText
-//     }
-
-//     MouseArea {
-//         anchors.fill: parent
-//         onClicked: control.clicked()
-//     }
-
-//     ToolIndicatorPage {
-//         id: pageLoader
-//         pageComponent: "qrc:/qml/QGroundControl/Toolbar/FlowIndicatorPage.qml"
-//         indicator: control
-//     }
-// }
 import QtQuick
 import QtQuick.Layouts
 
@@ -74,17 +45,21 @@ Item {
             visible:                true   // later bind to sensor available
             spacing:                0
 
-            QGCLabel {
-                anchors.horizontalCenter: flowValue.horizontalCenter
-                color:  qgcPal.buttonText
-                text:   "85%"   // placeholder (quality)
-            }
+           QGCLabel {
+               anchors.horizontalCenter: flowValue.horizontalCenter
+               color: qgcPal.buttonText
+               text: _activeVehicle
+                     ? _activeVehicle.flowSensor.getFact("flowRate").valueString
+                     : ""
+    }
 
             QGCLabel {
-                id:     flowValue
-                color:  qgcPal.buttonText
-                text:   "2.45m" // placeholder (ground distance)
-            }
+               id: flowValue
+               color: qgcPal.buttonText
+               text: _activeVehicle
+                     ? _activeVehicle.flowSensor.getFact("pulseCount").value.toFixed(0) + " m"
+                     : ""
+    }
         }
     }
 

@@ -8,6 +8,7 @@ import QGroundControl.ScreenTools
 ToolIndicatorPage {
     showExpand: true   // allow expansion (like GPS)
 
+    property var    _activeVehicle:      QGroundControl.multiVehicleManager.activeVehicle
     property string na:      qsTr("N/A", "No data to display")
     property string valueNA: qsTr("--.--", "No data to display")
 
@@ -16,34 +17,30 @@ ToolIndicatorPage {
             spacing: ScreenTools.defaultFontPixelHeight / 2
 
             SettingsGroupLayout {
-                heading: qsTr("Optical Flow Sensor Status")
+                heading: qsTr(" Flow Sensor Status")
 
                 LabelledLabel {
                     label:      qsTr("Flow Rate")
-                    labelText:  "12.3 rad/s"    // placeholder
+                    labelText:  activeVehicle
+                     ? _activeVehicle.flowSensor.getFact("flowRate").valueString
+                     : ""    // placeholder
                 }
 
                 LabelledLabel {
-                    label:      qsTr("Quality")
-                    labelText:  "85 %"          // placeholder
+                    label:      qsTr("Pulse Count")
+                    labelText:  _activeVehicle
+                                ? _activeVehicle.flowSensor.getFact("pulseCount").value.toFixed(0) + " m"
+                                : ""          // placeholder
                 }
 
-                LabelledLabel {
-                    label:      qsTr("Ground Distance")
-                    labelText:  "2.45 m"        // placeholder
-                }
 
-                LabelledLabel {
-                    label:      qsTr("Sensor Status")
-                    labelText:  qsTr("OK")      // placeholder
-                }
             }
         }
     }
 
     expandedComponent: Component {
         SettingsGroupLayout {
-            heading: qsTr("Optical Flow Settings")
+            heading: qsTr("Flow Settings")
 
             QGCLabel {
                 text: qsTr("Additional flow sensor settings go here")
