@@ -46,19 +46,23 @@ Item {
             spacing:                0
 
             QGCLabel {
-                text: _activeVehicle
-                      ? _activeVehicle.distanceSensor.getFact("rotationNone").value.toFixed(2) + " m (Forward)"
-                      : "--"
+                text: _activeVehicle && _activeVehicle.distanceSensors.getFact("rotationNone")
+                      ? _activeVehicle.distanceSensors.getFact("rotationNone").value.toFixed(2) + " m (Forward)"
+                      : "fw"
             }
             QGCLabel {
-                text: _activeVehicle
-                      ? _activeVehicle.distanceSensor.getFact("rotationYaw180").value.toFixed(2) + " m (Rear)"
-                      : "--"
+                text: _activeVehicle && _activeVehicle.distanceSensors.getFact("rotationYaw180")
+                      ? _activeVehicle.distanceSensors.getFact("rotationYaw180").value.toFixed(2) + " m (Rear)"
+                      : "rr"
             }
             QGCLabel {
-                text: _activeVehicle
-                      ? _activeVehicle.distanceSensor.getFact("rotationPitch270").value.toFixed(2) + " m (Down)"
-                      : "--"
+                text: _activeVehicle && _activeVehicle.distanceSensors.getFact("rotationPitch270")
+                      ? _activeVehicle.distanceSensors.getFact("rotationPitch270").value.toFixed(2) + " m (Down)"
+                      : "dn"
+
+                onTextChanged: {
+                        console.log(" downward facing :",_activeVehicle.distanceSensors.getFact("rotationPitch270").value.toFixed(2))
+                    }
             }
         }
     }

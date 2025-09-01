@@ -22,19 +22,19 @@ import QGroundControl.ScreenTools
 //                 LabelledLabel {
 //                     label:      qsTr("Forward")
 //                     labelText:  activeVehicle
-//                                 ? _activeVehicle.distanceSensor.getFact("rotationNone").value.toFixed(2) + " m (Forward)"
+//                                 ? _activeVehicle.distanceSensors.getFact("rotationNone").value.toFixed(2) + " m (Forward)"
 //                                 : "--"
 //                 }
 //                 LabelledLabel {
 //                     label:      qsTr("Backward")
 //                     labelText:  _activeVehicle
-//                                 ? _activeVehicle.distanceSensor.getFact("rotationYaw180").value.toFixed(2) + " m (Rear)"
+//                                 ? _activeVehicle.distanceSensors.getFact("rotationYaw180").value.toFixed(2) + " m (Rear)"
 //                                 : "--"
 //                 }
 //                 LabelledLabel {
 //                     label:      qsTr("Terrain")
 //                     labelText:  _activeVehicle
-//                                 ? _activeVehicle.distanceSensor.getFact("rotationPitch270").value.toFixed(2) + " m (Down)"
+//                                 ? _activeVehicle.distanceSensors.getFact("rotationPitch270").value.toFixed(2) + " m (Down)"
 //                                 : "--"          // placeholder
 //                 }
 
@@ -67,13 +67,12 @@ ToolIndicatorPage {
                         { key: "rotationPitch90",  label: "Up (Pitch 90°)" },
                         { key: "rotationPitch270", label: "Down (Pitch 270°)" }
                     ]
-
-                    delegate: LabelledLabel {
+                     delegate: LabelledLabel {
                         label: modelData.label
-                        labelText: _activeVehicle && _activeVehicle.distanceSensor
-                                   ? (_activeVehicle.distanceSensor.getFact(modelData.key).value === undefined
+                        labelText: _activeVehicle && _activeVehicle.distanceSensors
+                                   ? (_activeVehicle.distanceSensors.getFact(modelData.key).value === undefined
                                       ? "--"
-                                      : _activeVehicle.distanceSensor.getFact(modelData.key).value.toFixed(2) + " m")
+                                      : _activeVehicle.distanceSensors.getFact(modelData.key).value.toFixed(2) + " m")
                                    : "--"
                     }
                 }

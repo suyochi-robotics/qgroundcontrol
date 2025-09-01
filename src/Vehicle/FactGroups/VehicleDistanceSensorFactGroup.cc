@@ -59,6 +59,11 @@ void VehicleDistanceSensorFactGroup::handleMessage(Vehicle *vehicle, const mavli
     for (const orientation2Fact_s &orientation2Fact : rgOrientation2Fact) {
         if (orientation2Fact.orientation == distanceSensor.orientation) {
             orientation2Fact.fact->setRawValue(distanceSensor.current_distance / 100.0); // cm to meters
+            // qDebug() << "------------ DEBUG OF DISTAMCE_SENSORS FACTS ---------------\n";
+            // qDebug() << "[DBG][DistanceSensorFactGroup]"
+            //          << "orientation:" << distanceSensor.orientation
+            //          << "current_distance:" << distanceSensor.current_distance
+            //          << "meters:";
             break;
         }
     }
