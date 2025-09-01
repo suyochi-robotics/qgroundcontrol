@@ -21,16 +21,16 @@ ToolIndicatorPage {
 
                 LabelledLabel {
                     label:      qsTr("Flow Rate")
-                    labelText:  _activeVehicle
-                                ? _activeVehicle.flowSensor.getFact("flowRate").value.toFixed(2)
-                                : ""
+                    labelText:  _activeVehicle&& !isNaN(_activeVehicle.flowSensor.flowRate.value)
+                                ? _activeVehicle.flowSensor.flowRate.value.toFixed(2)
+                                : "--"
                 }
 
                 LabelledLabel {
                     label:      qsTr("Pulse Count")
-                    labelText:  _activeVehicle
-                                ? _activeVehicle.flowSensor.getFact("pulseCount").value.toFixed(0)
-                                : ""          // placeholder
+                    labelText:  _activeVehicle&& !isNaN(_activeVehicle.flowSensor.pulseCount.value)
+                                ? _activeVehicle.flowSensor.pulseCount.value.toFixed(0)
+                                : "--"          // placeholder
                 }
 
 

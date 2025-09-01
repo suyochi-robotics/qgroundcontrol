@@ -42,27 +42,23 @@ Item {
         Column {
             id:                     flowValuesColumn
             anchors.verticalCenter: parent.verticalCenter
-            visible:                true   // later bind to sensor available
+            visible:                _activeVehicle && _activeVehicle.distanceSensors ? true : false  // later bind to sensor available
             spacing:                0
 
             QGCLabel {
-                text: _activeVehicle && _activeVehicle.distanceSensors.getFact("rotationNone")
-                      ? _activeVehicle.distanceSensors.getFact("rotationNone").value.toFixed(2) + " m (Forward)"
-                      : "fw"
+                text: _activeVehicle && !isNaN(_activeVehicle.distanceSensors.rotationNone.value)
+                      ? _activeVehicle.distanceSensors.rotationNone.value.toFixed(2) + " m (Forward)"
+                      : "--"
             }
             QGCLabel {
-                text: _activeVehicle && _activeVehicle.distanceSensors.getFact("rotationYaw180")
-                      ? _activeVehicle.distanceSensors.getFact("rotationYaw180").value.toFixed(2) + " m (Rear)"
-                      : "rr"
+                text: control._activeVehicle && !isNaN(_activeVehicle.distanceSensors.rotationYaw180.value)
+                      ? _activeVehicle.distanceSensors.rotationYaw180.value.toFixed(2) + " m (Rear)"
+                      : "--"
             }
             QGCLabel {
-                text: _activeVehicle && _activeVehicle.distanceSensors.getFact("rotationPitch270")
-                      ? _activeVehicle.distanceSensors.getFact("rotationPitch270").value.toFixed(2) + " m (Down)"
-                      : "dn"
-
-                onTextChanged: {
-                        console.log(" downward facing :",_activeVehicle.distanceSensors.getFact("rotationPitch270").value.toFixed(2))
-                    }
+                text: _activeVehicle && !isNaN(_activeVehicle.distanceSensors.rotationPitch270.value)
+                      ? _activeVehicle.distanceSensors.rotationPitch270.value.toFixed(2) + " m (Down)"
+                      : "--"
             }
         }
     }
