@@ -20,6 +20,7 @@
 #include "SurveyPlanCreator.h"
 #include "StructureScanPlanCreator.h"
 #include "CorridorScanPlanCreator.h"
+#include "FieldSprayPlanCreator.h"
 #include "BlankPlanCreator.h"
 #include "QmlObjectListModel.h"
 #include "GeoFenceManager.h"
@@ -626,6 +627,7 @@ void PlanMasterController::_updatePlanCreatorsList(void)
             _planCreators->append(new BlankPlanCreator(this, this));
             _planCreators->append(new SurveyPlanCreator(this, this));
             _planCreators->append(new CorridorScanPlanCreator(this, this));
+            _planCreators->append(new FieldSprayPlanCreator(this, this));
             emit planCreatorsChanged(_planCreators);
         }
 
@@ -634,7 +636,7 @@ void PlanMasterController::_updatePlanCreatorsList(void)
                 _planCreators->removeAt(_planCreators->count() - 1);
             }
         } else {
-            if (_planCreators->count() != 4) {
+            if (_planCreators->count() != 5) {
                 _planCreators->append(new StructureScanPlanCreator(this, this));
             }
         }

@@ -65,6 +65,10 @@ target_sources(${CMAKE_PROJECT_NAME}
         SurveyComplexItem.h
         SurveyPlanCreator.cc
         SurveyPlanCreator.h
+        FieldSprayComplexItem.cc
+        FieldSprayComplexItem.h
+        FieldSprayPlanCreator.cc
+        FieldSprayPlanCreator.h
         TakeoffMissionItem.cc
         TakeoffMissionItem.h
         TransectStyleComplexItem.cc
