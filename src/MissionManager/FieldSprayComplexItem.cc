@@ -8,7 +8,7 @@
  ****************************************************************************/
 
 
-#include "FieldSprayComplexItem.h"
+#include "AgriMissionComplexItem.h"
 #include "JsonHelper.h"
 #include "QGCGeo.h"
 #include "QGCQGeoCoordinate.h"
@@ -24,19 +24,19 @@
 #include <QtCore/QJsonArray>
 #include <QtCore/QLineF>
 
-QGC_LOGGING_CATEGORY(FieldSprayComplexItemLog, "FieldSprayComplexItemLog")
+QGC_LOGGING_CATEGORY(AgriMissionComplexItemLog, "AgriMissionComplexItemLog")
 
-const QString FieldSprayComplexItem::name(FieldSprayComplexItem::tr("Field Spray"));
+const QString AgriMissionComplexItem::name(AgriMissionComplexItem::tr("Agri Mission"));
 
-FieldSprayComplexItem::FieldSprayComplexItem(PlanMasterController* masterController, bool flyView, const QString& kmlOrShpFile)
+AgriMissionComplexItem::AgriMissionComplexItem(PlanMasterController* masterController, bool flyView, const QString& kmlOrShpFile)
     : TransectStyleComplexItem  (masterController, flyView, settingsGroup)
-      , _metaDataMap              (FactMetaData::createMapFromJsonFile(QStringLiteral(":/json/FieldSpray.SettingsGroup.json"), this))
+      , _metaDataMap              (FactMetaData::createMapFromJsonFile(QStringLiteral(":/json/AgriMission.SettingsGroup.json"), this))
       , _gridAngleFact            (settingsGroup, _metaDataMap[gridAngleName])
       , _flyAlternateTransectsFact(settingsGroup, _metaDataMap[flyAlternateTransectsName])
       , _splitConcavePolygonsFact (settingsGroup, _metaDataMap[splitConcavePolygonsName])
       , _entryPoint               (EntryLocationTopLeft)
 {
-    _editorQml = "qrc:/qml/QGroundControl/Controls/FieldSprayItemEditor.qml";
+    _editorQml = "qrc:/qml/QGroundControl/Controls/AgriMissionItemEditor.qml";
 
     if (_controllerVehicle && !(_controllerVehicle->fixedWing() || _controllerVehicle->vtol())) {
         // Only fixed wing flight paths support alternate transects
@@ -48,18 +48,18 @@ FieldSprayComplexItem::FieldSprayComplexItem(PlanMasterController* masterControl
         _cameraCalc.distanceToSurface()->setRawValue(SettingsManager::instance()->appSettings()->defaultMissionItemAltitude()->rawValue());
     }
 
-    connect(&_gridAngleFact,            &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
-    connect(&_flyAlternateTransectsFact,&Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
-    connect(&_splitConcavePolygonsFact, &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
-    connect(this,                       &FieldSprayComplexItem::refly90DegreesChanged,  this, &FieldSprayComplexItem::_setDirty);
+    connect(&_gridAngleFact,            &Fact::valueChanged,                        this, &AgriMissionComplexItem::_setDirty);
+    connect(&_flyAlternateTransectsFact,&Fact::valueChanged,                        this, &AgriMissionComplexItem::_setDirty);
+    connect(&_splitConcavePolygonsFact, &Fact::valueChanged,                        this, &AgriMissionComplexItem::_setDirty);
+    connect(this,                       &AgriMissionComplexItem::refly90DegreesChanged,  this, &AgriMissionComplexItem::_setDirty);
 
-    connect(&_gridAngleFact,            &Fact::valueChanged,                        this, &FieldSprayComplexItem::_rebuildTransects);
-    connect(&_flyAlternateTransectsFact,&Fact::valueChanged,                        this, &FieldSprayComplexItem::_rebuildTransects);
-    connect(&_splitConcavePolygonsFact, &Fact::valueChanged,                        this, &FieldSprayComplexItem::_rebuildTransects);
-    connect(this,                       &FieldSprayComplexItem::refly90DegreesChanged,  this, &FieldSprayComplexItem::_rebuildTransects);
+    connect(&_gridAngleFact,            &Fact::valueChanged,                        this, &AgriMissionComplexItem::_rebuildTransects);
+    connect(&_flyAlternateTransectsFact,&Fact::valueChanged,                        this, &AgriMissionComplexItem::_rebuildTransects);
+    connect(&_splitConcavePolygonsFact, &Fact::valueChanged,                        this, &AgriMissionComplexItem::_rebuildTransects);
+    connect(this,                       &AgriMissionComplexItem::refly90DegreesChanged,  this, &AgriMissionComplexItem::_rebuildTransects);
 
-    connect(&_surveyAreaPolygon,        &QGCMapPolygon::isValidChanged,             this, &FieldSprayComplexItem::_updateWizardMode);
-    connect(&_surveyAreaPolygon,        &QGCMapPolygon::traceModeChanged,           this, &FieldSprayComplexItem::_updateWizardMode);
+    connect(&_surveyAreaPolygon,        &QGCMapPolygon::isValidChanged,             this, &AgriMissionComplexItem::_updateWizardMode);
+    connect(&_surveyAreaPolygon,        &QGCMapPolygon::traceModeChanged,           this, &AgriMissionComplexItem::_updateWizardMode);
 
     if (!kmlOrShpFile.isEmpty()) {
         _surveyAreaPolygon.loadKMLOrSHPFile(kmlOrShpFile);
@@ -68,7 +68,7 @@ FieldSprayComplexItem::FieldSprayComplexItem(PlanMasterController* masterControl
     setDirty(false);
 }
 
-void FieldSprayComplexItem::save(QJsonArray&  planItems)
+void AgriMissionComplexItem::save(QJsonArray&  planItems)
 {
     QJsonObject saveObject;
 
@@ -76,7 +76,7 @@ void FieldSprayComplexItem::save(QJsonArray&  planItems)
     planItems.append(saveObject);
 }
 
-void FieldSprayComplexItem::savePreset(const QString& name)
+void AgriMissionComplexItem::savePreset(const QString& name)
 {
     QJsonObject saveObject;
 
@@ -84,7 +84,7 @@ void FieldSprayComplexItem::savePreset(const QString& name)
     _savePresetJson(name, saveObject);
 }
 
-void FieldSprayComplexItem::_saveCommon(QJsonObject& saveObject)
+void AgriMissionComplexItem::_saveCommon(QJsonObject& saveObject)
 {
     TransectStyleComplexItem::_save(saveObject);
 
@@ -100,7 +100,7 @@ void FieldSprayComplexItem::_saveCommon(QJsonObject& saveObject)
     _surveyAreaPolygon.saveToJson(saveObject);
 }
 
-void FieldSprayComplexItem::loadPreset(const QString& name)
+void AgriMissionComplexItem::loadPreset(const QString& name)
 {
     QString errorString;
 
@@ -111,7 +111,7 @@ void FieldSprayComplexItem::loadPreset(const QString& name)
     _rebuildTransects();
 }
 
-bool FieldSprayComplexItem::load(const QJsonObject& complexObject, int sequenceNumber, QString& errorString)
+bool AgriMissionComplexItem::load(const QJsonObject& complexObject, int sequenceNumber, QString& errorString)
 {
     // We need to pull version first to determine what validation/conversion needs to be performed
     QList<JsonHelper::KeyValidateInfo> versionKeyInfoList = {
@@ -158,7 +158,7 @@ bool FieldSprayComplexItem::load(const QJsonObject& complexObject, int sequenceN
     return true;
 }
 
-bool FieldSprayComplexItem::_loadV4V5(const QJsonObject& complexObject, int sequenceNumber, QString& errorString, int version, bool forPresets)
+bool AgriMissionComplexItem::_loadV4V5(const QJsonObject& complexObject, int sequenceNumber, QString& errorString, int version, bool forPresets)
 {
     QList<JsonHelper::KeyValidateInfo> keyInfoList = {
                                                       { VisualMissionItem::jsonTypeKey,               QJsonValue::String, true },
@@ -214,7 +214,7 @@ bool FieldSprayComplexItem::_loadV4V5(const QJsonObject& complexObject, int sequ
     return true;
 }
 
-bool FieldSprayComplexItem::_loadV3(const QJsonObject& complexObject, int sequenceNumber, QString& errorString)
+bool AgriMissionComplexItem::_loadV3(const QJsonObject& complexObject, int sequenceNumber, QString& errorString)
 {
     QList<JsonHelper::KeyValidateInfo> mainKeyInfoList = {
         { VisualMissionItem::jsonTypeKey,               QJsonValue::String, true },
@@ -348,7 +348,7 @@ bool FieldSprayComplexItem::_loadV3(const QJsonObject& complexObject, int sequen
 }
 
 /// Reverse the order of the transects. First transect becomes last and so forth.
-void FieldSprayComplexItem::_reverseTransectOrder(QList<QList<QGeoCoordinate>>& transects)
+void AgriMissionComplexItem::_reverseTransectOrder(QList<QList<QGeoCoordinate>>& transects)
 {
     QList<QList<QGeoCoordinate>> rgReversedTransects;
     for (int i=transects.count() - 1; i>=0; i--) {
@@ -358,7 +358,7 @@ void FieldSprayComplexItem::_reverseTransectOrder(QList<QList<QGeoCoordinate>>& 
 }
 
 /// Reverse the order of all points withing each transect, First point becomes last and so forth.
-void FieldSprayComplexItem::_reverseInternalTransectPoints(QList<QList<QGeoCoordinate>>& transects)
+void AgriMissionComplexItem::_reverseInternalTransectPoints(QList<QList<QGeoCoordinate>>& transects)
 {
     for (int i=0; i<transects.count(); i++) {
         QList<QGeoCoordinate> rgReversedCoords;
@@ -374,7 +374,7 @@ void FieldSprayComplexItem::_reverseInternalTransectPoints(QList<QList<QGeoCoord
 /// and the first point within that transect is the shortest distance to the specified coordinate.
 ///     @param distanceCoord Coordinate to measure distance against
 ///     @param transects Transects to test and reorder
-void FieldSprayComplexItem::_optimizeTransectsForShortestDistance(const QGeoCoordinate& distanceCoord, QList<QList<QGeoCoordinate>>& transects)
+void AgriMissionComplexItem::_optimizeTransectsForShortestDistance(const QGeoCoordinate& distanceCoord, QList<QList<QGeoCoordinate>>& transects)
 {
     double rgTransectDistance[4];
     rgTransectDistance[0] = transects.first().first().distanceTo(distanceCoord);
@@ -401,17 +401,17 @@ void FieldSprayComplexItem::_optimizeTransectsForShortestDistance(const QGeoCoor
     }
 }
 
-qreal FieldSprayComplexItem::_ccw(QPointF pt1, QPointF pt2, QPointF pt3)
+qreal AgriMissionComplexItem::_ccw(QPointF pt1, QPointF pt2, QPointF pt3)
 {
     return (pt2.x()-pt1.x())*(pt3.y()-pt1.y()) - (pt2.y()-pt1.y())*(pt3.x()-pt1.x());
 }
 
-qreal FieldSprayComplexItem::_dp(QPointF pt1, QPointF pt2)
+qreal AgriMissionComplexItem::_dp(QPointF pt1, QPointF pt2)
 {
     return (pt2.x()-pt1.x())/qSqrt((pt2.x()-pt1.x())*(pt2.x()-pt1.x()) + (pt2.y()-pt1.y())*(pt2.y()-pt1.y()));
 }
 
-void FieldSprayComplexItem::_swapPoints(QList<QPointF>& points, int index1, int index2)
+void AgriMissionComplexItem::_swapPoints(QList<QPointF>& points, int index1, int index2)
 {
     QPointF temp = points[index1];
     points[index1] = points[index2];
@@ -419,14 +419,14 @@ void FieldSprayComplexItem::_swapPoints(QList<QPointF>& points, int index1, int 
 }
 
 /// Returns true if the current grid angle generates north/south oriented transects
-bool FieldSprayComplexItem::_gridAngleIsNorthSouthTransects()
+bool AgriMissionComplexItem::_gridAngleIsNorthSouthTransects()
 {
     // Grid angle ranges from -360<->360
     double gridAngle = qAbs(_gridAngleFact.rawValue().toDouble());
     return gridAngle < 45.0 || (gridAngle > 360.0 - 45.0) || (gridAngle > 90.0 + 45.0 && gridAngle < 270.0 - 45.0);
 }
 
-void FieldSprayComplexItem::_adjustTransectsToEntryPointLocation(QList<QList<QGeoCoordinate>>& transects)
+void AgriMissionComplexItem::_adjustTransectsToEntryPointLocation(QList<QList<QGeoCoordinate>>& transects)
 {
     if (transects.count() == 0) {
         return;
@@ -443,18 +443,18 @@ void FieldSprayComplexItem::_adjustTransectsToEntryPointLocation(QList<QList<QGe
     }
 
     if (reversePoints) {
-        qCDebug(FieldSprayComplexItemLog) << "_adjustTransectsToEntryPointLocation Reverse Points";
+        qCDebug(AgriMissionComplexItemLog) << "_adjustTransectsToEntryPointLocation Reverse Points";
         _reverseInternalTransectPoints(transects);
     }
     if (reverseTransects) {
-        qCDebug(FieldSprayComplexItemLog) << "_adjustTransectsToEntryPointLocation Reverse Transects";
+        qCDebug(AgriMissionComplexItemLog) << "_adjustTransectsToEntryPointLocation Reverse Transects";
         _reverseTransectOrder(transects);
     }
 
-    qCDebug(FieldSprayComplexItemLog) << "_adjustTransectsToEntryPointLocation Modified entry point:entryLocation" << transects.first().first() << _entryPoint;
+    qCDebug(AgriMissionComplexItemLog) << "_adjustTransectsToEntryPointLocation Modified entry point:entryLocation" << transects.first().first() << _entryPoint;
 }
 
-QPointF FieldSprayComplexItem::_rotatePoint(const QPointF& point, const QPointF& origin, double angle)
+QPointF AgriMissionComplexItem::_rotatePoint(const QPointF& point, const QPointF& origin, double angle)
 {
     QPointF rotated;
     double radians = (M_PI / 180.0) * -angle;
@@ -465,7 +465,7 @@ QPointF FieldSprayComplexItem::_rotatePoint(const QPointF& point, const QPointF&
     return rotated;
 }
 
-void FieldSprayComplexItem::_intersectLinesWithRect(const QList<QLineF>& lineList, const QRectF& boundRect, QList<QLineF>& resultLines)
+void AgriMissionComplexItem::_intersectLinesWithRect(const QList<QLineF>& lineList, const QRectF& boundRect, QList<QLineF>& resultLines)
 {
     QLineF topLine      (boundRect.topLeft(),       boundRect.topRight());
     QLineF bottomLine   (boundRect.bottomLeft(),    boundRect.bottomRight());
@@ -526,7 +526,7 @@ void FieldSprayComplexItem::_intersectLinesWithRect(const QList<QLineF>& lineLis
     }
 }
 
-void FieldSprayComplexItem::_intersectLinesWithPolygon(const QList<QLineF>& lineList, const QPolygonF& polygon, QList<QLineF>& resultLines)
+void AgriMissionComplexItem::_intersectLinesWithPolygon(const QList<QLineF>& lineList, const QPolygonF& polygon, QList<QLineF>& resultLines)
 {
     resultLines.clear();
 
@@ -573,7 +573,7 @@ void FieldSprayComplexItem::_intersectLinesWithPolygon(const QList<QLineF>& line
 }
 
 /// Adjust the line segments such that they are all going the same direction with respect to going from P1->P2
-void FieldSprayComplexItem::_adjustLineDirection(const QList<QLineF>& lineList, QList<QLineF>& resultLines)
+void AgriMissionComplexItem::_adjustLineDirection(const QList<QLineF>& lineList, QList<QLineF>& resultLines)
 {
     qreal firstAngle = 0;
     for (int i=0; i<lineList.count(); i++) {
@@ -595,7 +595,7 @@ void FieldSprayComplexItem::_adjustLineDirection(const QList<QLineF>& lineList, 
     }
 }
 
-double FieldSprayComplexItem::_clampGridAngle90(double gridAngle)
+double AgriMissionComplexItem::_clampGridAngle90(double gridAngle)
 {
     // Clamp grid angle to -90<->90. This prevents transects from being rotated to a reversed order.
     if (gridAngle > 90.0) {
@@ -606,7 +606,7 @@ double FieldSprayComplexItem::_clampGridAngle90(double gridAngle)
     return gridAngle;
 }
 
-bool FieldSprayComplexItem::_nextTransectCoord(const QList<QGeoCoordinate>& transectPoints, int pointIndex, QGeoCoordinate& coord)
+bool AgriMissionComplexItem::_nextTransectCoord(const QList<QGeoCoordinate>& transectPoints, int pointIndex, QGeoCoordinate& coord)
 {
     if (pointIndex > transectPoints.count()) {
         qWarning() << "Bad grid generation";
@@ -617,17 +617,17 @@ bool FieldSprayComplexItem::_nextTransectCoord(const QList<QGeoCoordinate>& tran
     return true;
 }
 
-bool FieldSprayComplexItem::_hasTurnaround(void) const
+bool AgriMissionComplexItem::_hasTurnaround(void) const
 {
     return _turnAroundDistance() > 0;
 }
 
-double FieldSprayComplexItem::_turnaroundDistance(void) const
+double AgriMissionComplexItem::_turnaroundDistance(void) const
 {
     return _turnAroundDistanceFact.rawValue().toDouble();
 }
 
-void FieldSprayComplexItem::_rebuildTransectsPhase1(void)
+void AgriMissionComplexItem::_rebuildTransectsPhase1(void)
 {
     _rebuildTransectsPhase1WorkerSinglePolygon(false /* refly */);
     if (_refly90DegreesFact.rawValue().toBool()) {
@@ -635,7 +635,7 @@ void FieldSprayComplexItem::_rebuildTransectsPhase1(void)
     }
 }
 
-void FieldSprayComplexItem::_rebuildTransectsPhase1WorkerSinglePolygon(bool refly)
+void AgriMissionComplexItem::_rebuildTransectsPhase1WorkerSinglePolygon(bool refly)
 {
     if (_ignoreRecalc) {
         return;
@@ -656,7 +656,7 @@ void FieldSprayComplexItem::_rebuildTransectsPhase1WorkerSinglePolygon(bool refl
 
     QList<QPointF> polygonPoints;
     QGeoCoordinate tangentOrigin = _surveyAreaPolygon.pathModel().value<QGCQGeoCoordinate*>(0)->coordinate();
-    qCDebug(FieldSprayComplexItemLog) << "_rebuildTransectsPhase1 Convert polygon to NED - _surveyAreaPolygon.count():tangentOrigin" << _surveyAreaPolygon.count() << tangentOrigin;
+    qCDebug(AgriMissionComplexItemLog) << "_rebuildTransectsPhase1 Convert polygon to NED - _surveyAreaPolygon.count():tangentOrigin" << _surveyAreaPolygon.count() << tangentOrigin;
     for (int i=0; i<_surveyAreaPolygon.count(); i++) {
         double y, x, down;
         QGeoCoordinate vertex = _surveyAreaPolygon.pathModel().value<QGCQGeoCoordinate*>(i)->coordinate();
@@ -667,7 +667,7 @@ void FieldSprayComplexItem::_rebuildTransectsPhase1WorkerSinglePolygon(bool refl
             QGCGeo::convertGeoToNed(vertex, tangentOrigin, y, x, down);
         }
         polygonPoints += QPointF(x, y);
-        qCDebug(FieldSprayComplexItemLog) << "_rebuildTransectsPhase1 vertex:x:y" << vertex << polygonPoints.last().x() << polygonPoints.last().y();
+        qCDebug(AgriMissionComplexItemLog) << "_rebuildTransectsPhase1 vertex:x:y" << vertex << polygonPoints.last().x() << polygonPoints.last().y();
     }
 
             // Generate transects
@@ -683,22 +683,22 @@ void FieldSprayComplexItem::_rebuildTransectsPhase1WorkerSinglePolygon(bool refl
 
     gridAngle = _clampGridAngle90(gridAngle);
     gridAngle += refly ? 90 : 0;
-    qCDebug(FieldSprayComplexItemLog) << "_rebuildTransectsPhase1 Clamped grid angle" << gridAngle;
+    qCDebug(AgriMissionComplexItemLog) << "_rebuildTransectsPhase1 Clamped grid angle" << gridAngle;
 
-    qCDebug(FieldSprayComplexItemLog) << "_rebuildTransectsPhase1 gridSpacing:gridAngle:refly" << gridSpacing << gridAngle << refly;
+    qCDebug(AgriMissionComplexItemLog) << "_rebuildTransectsPhase1 gridSpacing:gridAngle:refly" << gridSpacing << gridAngle << refly;
 
             // Convert polygon to bounding rect
 
-    qCDebug(FieldSprayComplexItemLog) << "_rebuildTransectsPhase1 Polygon";
+    qCDebug(AgriMissionComplexItemLog) << "_rebuildTransectsPhase1 Polygon";
     QPolygonF polygon;
     for (int i=0; i<polygonPoints.count(); i++) {
-        qCDebug(FieldSprayComplexItemLog) << "Vertex" << polygonPoints[i];
+        qCDebug(AgriMissionComplexItemLog) << "Vertex" << polygonPoints[i];
         polygon << polygonPoints[i];
     }
     polygon << polygonPoints[0];
     QRectF boundingRect = polygon.boundingRect();
     QPointF boundingCenter = boundingRect.center();
-    qCDebug(FieldSprayComplexItemLog) << "Bounding rect" << boundingRect.topLeft().x() << boundingRect.topLeft().y() << boundingRect.bottomRight().x() << boundingRect.bottomRight().y();
+    qCDebug(AgriMissionComplexItemLog) << "Bounding rect" << boundingRect.topLeft().x() << boundingRect.topLeft().y() << boundingRect.bottomRight().x() << boundingRect.bottomRight().y();
 
             // Create set of rotated parallel lines within the expanded bounding rect. Make the lines larger than the
             // bounding box to guarantee intersection.
@@ -819,7 +819,7 @@ void FieldSprayComplexItem::_rebuildTransectsPhase1WorkerSinglePolygon(bool refl
             double transectAzimuth = transect[0].azimuthTo(transect[1]);
             if (triggerDistance() < transectLength) {
                 int cInnerHoverPoints = static_cast<int>(floor(transectLength / triggerDistance()));
-                qCDebug(FieldSprayComplexItemLog) << "cInnerHoverPoints" << cInnerHoverPoints;
+                qCDebug(AgriMissionComplexItemLog) << "cInnerHoverPoints" << cInnerHoverPoints;
                 for (int i=0; i<cInnerHoverPoints; i++) {
                     QGeoCoordinate hoverCoord = transect[0].atDistanceAndAzimuth(triggerDistance() * (i + 1), transectAzimuth);
                     TransectStyleComplexItem::CoordInfo_t coordInfo = { hoverCoord, CoordTypeInteriorHoverTrigger };
@@ -1077,7 +1077,7 @@ bool SurveyComplexItem::_VertexIsReflex(const QPolygonF& polygon, QList<QPointF>
 }
 #endif
 
-void FieldSprayComplexItem::_rebuildTransectsFromPolygon(bool refly, const QPolygonF& polygon, const QGeoCoordinate& tangentOrigin, const QPointF* const transitionPoint)
+void AgriMissionComplexItem::_rebuildTransectsFromPolygon(bool refly, const QPolygonF& polygon, const QGeoCoordinate& tangentOrigin, const QPointF* const transitionPoint)
 {
     // Generate transects
 
@@ -1086,16 +1086,16 @@ void FieldSprayComplexItem::_rebuildTransectsFromPolygon(bool refly, const QPoly
 
     gridAngle = _clampGridAngle90(gridAngle);
     gridAngle += refly ? 90 : 0;
-    qCDebug(FieldSprayComplexItemLog) << "_rebuildTransectsPhase1 Clamped grid angle" << gridAngle;
+    qCDebug(AgriMissionComplexItemLog) << "_rebuildTransectsPhase1 Clamped grid angle" << gridAngle;
 
-    qCDebug(FieldSprayComplexItemLog) << "_rebuildTransectsPhase1 gridSpacing:gridAngle:refly" << gridSpacing << gridAngle << refly;
+    qCDebug(AgriMissionComplexItemLog) << "_rebuildTransectsPhase1 gridSpacing:gridAngle:refly" << gridSpacing << gridAngle << refly;
 
             // Convert polygon to bounding rect
 
-    qCDebug(FieldSprayComplexItemLog) << "_rebuildTransectsPhase1 Polygon";
+    qCDebug(AgriMissionComplexItemLog) << "_rebuildTransectsPhase1 Polygon";
     QRectF boundingRect = polygon.boundingRect();
     QPointF boundingCenter = boundingRect.center();
-    qCDebug(FieldSprayComplexItemLog) << "Bounding rect" << boundingRect.topLeft().x() << boundingRect.topLeft().y() << boundingRect.bottomRight().x() << boundingRect.bottomRight().y();
+    qCDebug(AgriMissionComplexItemLog) << "Bounding rect" << boundingRect.topLeft().x() << boundingRect.topLeft().y() << boundingRect.bottomRight().x() << boundingRect.bottomRight().y();
 
             // Create set of rotated parallel lines within the expanded bounding rect. Make the lines larger than the
             // bounding box to guarantee intersection.
@@ -1226,7 +1226,7 @@ void FieldSprayComplexItem::_rebuildTransectsFromPolygon(bool refly, const QPoly
             double transectAzimuth = transect[0].azimuthTo(transect[1]);
             if (triggerDistance() < transectLength) {
                 int cInnerHoverPoints = static_cast<int>(floor(transectLength / triggerDistance()));
-                qCDebug(FieldSprayComplexItemLog) << "cInnerHoverPoints" << cInnerHoverPoints;
+                qCDebug(AgriMissionComplexItemLog) << "cInnerHoverPoints" << cInnerHoverPoints;
                 for (int i=0; i<cInnerHoverPoints; i++) {
                     QGeoCoordinate hoverCoord = transect[0].atDistanceAndAzimuth(triggerDistance() * (i + 1), transectAzimuth);
                     TransectStyleComplexItem::CoordInfo_t coordInfo = { hoverCoord, CoordTypeInteriorHoverTrigger };
@@ -1255,10 +1255,10 @@ void FieldSprayComplexItem::_rebuildTransectsFromPolygon(bool refly, const QPoly
 
         _transects.append(coordInfoTransect);
     }
-    qCDebug(FieldSprayComplexItemLog) << "_transects.size() " << _transects.size();
+    qCDebug(AgriMissionComplexItemLog) << "_transects.size() " << _transects.size();
 }
 
-void FieldSprayComplexItem::_recalcCameraShots(void)
+void AgriMissionComplexItem::_recalcCameraShots(void)
 {
     double triggerDistance = this->triggerDistance();
 
@@ -1323,12 +1323,12 @@ void FieldSprayComplexItem::_recalcCameraShots(void)
     emit cameraShotsChanged();
 }
 
-FieldSprayComplexItem::ReadyForSaveState FieldSprayComplexItem::readyForSaveState(void) const
+AgriMissionComplexItem::ReadyForSaveState AgriMissionComplexItem::readyForSaveState(void) const
 {
     return TransectStyleComplexItem::readyForSaveState();
 }
 
-void FieldSprayComplexItem::rotateEntryPoint(void)
+void AgriMissionComplexItem::rotateEntryPoint(void)
 {
     if (_entryPoint == EntryLocationLast) {
         _entryPoint = EntryLocationFirst;
@@ -1341,12 +1341,12 @@ void FieldSprayComplexItem::rotateEntryPoint(void)
     setDirty(true);
 }
 
-double FieldSprayComplexItem::timeBetweenShots(void)
+double AgriMissionComplexItem::timeBetweenShots(void)
 {
     return _vehicleSpeed == 0 ? 0 : triggerDistance() / _vehicleSpeed;
 }
 
-double FieldSprayComplexItem::additionalTimeDelay (void) const
+double AgriMissionComplexItem::additionalTimeDelay (void) const
 {
     double hoverTime = 0;
 
@@ -1359,7 +1359,7 @@ double FieldSprayComplexItem::additionalTimeDelay (void) const
     return hoverTime;
 }
 
-void FieldSprayComplexItem::_updateWizardMode(void)
+void AgriMissionComplexItem::_updateWizardMode(void)
 {
     if (_surveyAreaPolygon.isValid() && !_surveyAreaPolygon.traceMode()) {
         setWizardMode(false);

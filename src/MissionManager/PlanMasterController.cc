@@ -20,7 +20,7 @@
 #include "SurveyPlanCreator.h"
 #include "StructureScanPlanCreator.h"
 #include "CorridorScanPlanCreator.h"
-#include "FieldSprayPlanCreator.h"
+#include "AgriMissionPlanCreator.h"
 #include "BlankPlanCreator.h"
 #include "QmlObjectListModel.h"
 #include "GeoFenceManager.h"
@@ -627,7 +627,7 @@ void PlanMasterController::_updatePlanCreatorsList(void)
             _planCreators->append(new BlankPlanCreator(this, this));
             _planCreators->append(new SurveyPlanCreator(this, this));
             _planCreators->append(new CorridorScanPlanCreator(this, this));
-            _planCreators->append(new FieldSprayPlanCreator(this, this));
+            _planCreators->append(new AgriMissionPlanCreator(this, this));
             emit planCreatorsChanged(_planCreators);
         }
 

@@ -14,19 +14,19 @@
 
 #include <QtCore/QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(FieldSprayComplexItemLog)
+Q_DECLARE_LOGGING_CATEGORY(AgriMissionComplexItemLog)
 
 class PlanMasterController;
 class MissionItem;
 
-class FieldSprayComplexItem : public TransectStyleComplexItem
+class AgriMissionComplexItem : public TransectStyleComplexItem
 {
     Q_OBJECT
 
    public:
     /// @param flyView true: Created for use in the Fly View, false: Created for use in the Plan View
     /// @param kmlOrShpFile Polygon comes from this file, empty for default polygon
-    FieldSprayComplexItem(PlanMasterController* masterController, bool flyView, const QString& kmlOrShpFile);
+    AgriMissionComplexItem(PlanMasterController* masterController, bool flyView, const QString& kmlOrShpFile);
 
     Q_PROPERTY(Fact*            gridAngle              READ gridAngle              CONSTANT)
     Q_PROPERTY(Fact*            flyAlternateTransects  READ flyAlternateTransects  CONSTANT)
@@ -42,7 +42,7 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
             // Overrides from ComplexMissionItem
     QString         patternName         (void) const final { return name; }
     bool            load                (const QJsonObject& complexObject, int sequenceNumber, QString& errorString) final;
-    QString         mapVisualQML        (void) const final { return QStringLiteral("FieldSprayMapVisual.qml"); }
+    QString         mapVisualQML        (void) const final { return QStringLiteral("AgriMissionMapVisual.qml"); }
     QString         presetsSettingsGroup(void) { return settingsGroup; }
     void            savePreset          (const QString& name);
     void            loadPreset          (const QString& name);
@@ -56,8 +56,8 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     double  timeBetweenShots    (void) final;
 
             // Overrides from VisualMissionionItem
-    QString             commandDescription  (void) const final { return tr("Field Spray"); }
-    QString             commandName         (void) const final { return tr("Field Spray"); }
+    QString             commandDescription  (void) const final { return tr("Agri Mission"); }
+    QString             commandName         (void) const final { return tr("Agri Mission"); }
     QString             abbreviation        (void) const final { return tr("F"); }
     ReadyForSaveState   readyForSaveState    (void) const final;
     double              additionalTimeDelay (void) const final;
@@ -74,10 +74,10 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
 
     static const QString name;
 
-    static constexpr const char* jsonComplexItemTypeValue =   "FieldSpray";
-    static constexpr const char* jsonV3ComplexItemTypeValue = "FieldSpray";
+    static constexpr const char* jsonComplexItemTypeValue =   "AgriMission";
+    static constexpr const char* jsonV3ComplexItemTypeValue = "AgriMission";
 
-    static constexpr const char* settingsGroup =              "FieldSpray";
+    static constexpr const char* settingsGroup =              "AgriMission";
     static constexpr const char* gridAngleName =              "GridAngle";
     static constexpr const char* gridEntryLocationName =      "GridEntryLocation";
     static constexpr const char* flyAlternateTransectsName =  "FlyAlternateTransects";

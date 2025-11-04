@@ -7,21 +7,21 @@
  *
  ****************************************************************************/
 
-#include "FieldSprayPlanCreator.h"
+#include "AgriMissionPlanCreator.h"
 #include "PlanMasterController.h"
-#include "FieldSprayComplexItem.h"
+#include "AgriMissionComplexItem.h"
 
-FieldSprayPlanCreator::FieldSprayPlanCreator(PlanMasterController* planMasterController, QObject* parent)
-    : PlanCreator(planMasterController, FieldSprayComplexItem::name, QStringLiteral("/qmlimages/PlanCreator/FieldSprayPlanCreator.png"), parent)
+AgriMissionPlanCreator::AgriMissionPlanCreator(PlanMasterController* planMasterController, QObject* parent)
+    : PlanCreator(planMasterController, AgriMissionComplexItem::name, QStringLiteral("/qmlimages/PlanCreator/AgriMissionPlanCreator.png"), parent)
 {
 
 }
 
-void FieldSprayPlanCreator::createPlan(const QGeoCoordinate& mapCenterCoord)
+void AgriMissionPlanCreator::createPlan(const QGeoCoordinate& mapCenterCoord)
 {
     _planMasterController->removeAll();
     VisualMissionItem* takeoffItem = _missionController->insertTakeoffItem(mapCenterCoord, -1);
-    _missionController->insertComplexMissionItem(FieldSprayComplexItem::name, mapCenterCoord, -1)->setWizardMode(true);
+    _missionController->insertComplexMissionItem(AgriMissionComplexItem::name, mapCenterCoord, -1)->setWizardMode(true);
     _missionController->insertLandItem(mapCenterCoord, -1);
     _missionController->setCurrentPlanViewSeqNum(takeoffItem->sequenceNumber(), true);
 }
