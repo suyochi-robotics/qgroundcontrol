@@ -5,24 +5,16 @@ import QGroundControl
 import QGroundControl.Controls
 import QGroundControl.ScreenTools
 
-
-import QtQuick
-import QtQuick.Layouts
-
-import QGroundControl
-import QGroundControl.Controls
-import QGroundControl.ScreenTools
-
 Item {
     id:             control
-    width:          flowIndicatorRow.width
+    width:          distanceIndicatorRow.width
     anchors.top:    parent.top
     anchors.bottom: parent.bottom
 
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
 
     Row {
-        id:             flowIndicatorRow
+        id:             distanceIndicatorRow
         anchors.top:    parent.top
         anchors.bottom: parent.bottom
         spacing:        ScreenTools.defaultFontPixelWidth / 2

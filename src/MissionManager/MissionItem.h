@@ -20,6 +20,7 @@
 #include "Fact.h"
 
 class SurveyComplexItem;
+class FieldSprayComplexItem;
 class SimpleMissionItem;
 class MissionController;
 #ifdef QGC_UNITTEST_BUILD
@@ -145,6 +146,7 @@ private:
     static constexpr const char*  _jsonCoordinateKey =      "coordinate";
 
     friend class SurveyComplexItem;
+    friend class FieldSprayComplexItem;
     friend class SimpleMissionItem;
     friend class MissionController;
 #ifdef QGC_UNITTEST_BUILD

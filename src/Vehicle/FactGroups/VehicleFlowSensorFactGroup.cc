@@ -4,7 +4,7 @@
 Q_LOGGING_CATEGORY(FlowSensorLog, "qgc.vehicle.flowsensor")
 
 VehicleFlowSensorFactGroup::VehicleFlowSensorFactGroup(QObject* parent)
-    : FactGroup(0, ":/json/Vehicle/FlowSensorFact.json", parent)
+    : FactGroup(0, ":/json/Vehicle/FlowSensorFactGroup.json", parent)
   
 {
     _addFact(&_flowRateFact);
@@ -15,26 +15,14 @@ VehicleFlowSensorFactGroup::VehicleFlowSensorFactGroup(QObject* parent)
     _pulseCountFact.setRawValue(qQNaN());
 }
 
-// // ✅ These do the updates:
-// void FlowSensorFactGroup::setFlowRate(double rate)
-// {
-//     _flowRateFact.setRawValue(rate);
-// }
-
-// void FlowSensorFactGroup::setPulseCount(int count)
-// {
-//     _pulseCountFact.setRawValue(count);
-// }
-
-
 void VehicleFlowSensorFactGroup::handleMessage(Vehicle *vehicle, const mavlink_message_t &message)
 {
     Q_UNUSED(vehicle);
 
     qCDebug(FlowSensorLog) << "handleMessage received msgid in FlowsensorFactGroup:" << message.msgid;
     if (message.msgid != MAVLINK_MSG_ID_FLOW_SENSOR) {
-        return; // Ignore messages that are not FLOW_SENSOR
         qCDebug(FlowSensorLog) << "handleMessage received msgid in FlowsensorFactGroup:" << message.msgid;
+        return; // Ignore messages that are not FLOW_SENSOR
     }
     switch (message.msgid) {
         case MAVLINK_MSG_ID_FLOW_SENSOR:

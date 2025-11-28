@@ -198,6 +198,8 @@ qt_add_qml_module(QGroundControlControlsModule
         StructureScanMapVisual.qml
         SurveyItemEditor.qml
         SurveyMapVisual.qml
+        FieldSprayItemEditor.qml
+        FieldSprayMapVisual.qml
         TakeoffItemMapVisual.qml
         TerrainStatus.qml
         TransectStyleComplexItemEditor.qml

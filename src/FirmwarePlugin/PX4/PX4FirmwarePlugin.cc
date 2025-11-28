@@ -794,7 +794,10 @@ const QVariantList& PX4FirmwarePlugin::toolIndicators(const Vehicle* vehicle)
                 break;
             }
         }
-    }
+
+        _toolIndicatorList.append(QVariant::fromValue(QUrl::fromUserInput("qrc:/qml/QGroundControl/Toolbar/FlowIndicator.qml")));
+        _toolIndicatorList.append(QVariant::fromValue(QUrl::fromUserInput("qrc:/qml/QGroundControl/Toolbar/DistanceIndicator.qml")));
+    }    
 
     return _toolIndicatorList;
 }

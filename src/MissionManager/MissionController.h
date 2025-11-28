@@ -104,6 +104,7 @@ public:
     Q_PROPERTY(int                  batteriesRequired               READ batteriesRequired              NOTIFY batteriesRequiredChanged)
     Q_PROPERTY(QGCGeoBoundingCube*  travelBoundingCube              READ travelBoundingCube             NOTIFY missionBoundingCubeChanged)
     Q_PROPERTY(QString              surveyComplexItemName           READ surveyComplexItemName          CONSTANT)
+    Q_PROPERTY(QString              fieldSprayComplexItemName       READ fieldSprayComplexItemName      CONSTANT)
     Q_PROPERTY(QString              corridorScanComplexItemName     READ corridorScanComplexItemName    CONSTANT)
     Q_PROPERTY(QString              structureScanComplexItemName    READ structureScanComplexItemName   CONSTANT)
     Q_PROPERTY(bool                 onlyInsertTakeoffValid          MEMBER _onlyInsertTakeoffValid      NOTIFY onlyInsertTakeoffValidChanged)
@@ -236,6 +237,7 @@ public:
     TakeoffMissionItem* takeoffMissionItem          (void) const { return _takeoffMissionItem; }
     double              progressPct                 (void) const { return _progressPct; }
     QString             surveyComplexItemName       (void) const;
+    QString             fieldSprayComplexItemName   (void) const;
     QString             corridorScanComplexItemName (void) const;
     QString             structureScanComplexItemName(void) const;
     bool                isInsertTakeoffValid        (void) const;
