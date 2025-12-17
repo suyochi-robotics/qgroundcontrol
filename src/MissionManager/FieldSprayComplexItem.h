@@ -32,10 +32,12 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     Q_PROPERTY(Fact*            flyAlternateTransects  READ flyAlternateTransects  CONSTANT)
     Q_PROPERTY(Fact*            splitConcavePolygons   READ splitConcavePolygons   CONSTANT)
     Q_PROPERTY(QGeoCoordinate   centerCoordinate       READ centerCoordinate       WRITE setCenterCoordinate)
+    // Q_PROPERTY(Fact*            tankCapacity           READ tankCapacity           CONSTANT)
 
     Fact* gridAngle             (void) { return &_gridAngleFact; }
     Fact* flyAlternateTransects (void) { return &_flyAlternateTransectsFact; }
     Fact* splitConcavePolygons  (void) { return &_splitConcavePolygonsFact; }
+    // Fact* tankCapacity          (void) { return &_tankCapacityFact; }
 
     Q_INVOKABLE void rotateEntryPoint(void);
 
@@ -82,6 +84,7 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     static constexpr const char* gridEntryLocationName =      "GridEntryLocation";
     static constexpr const char* flyAlternateTransectsName =  "FlyAlternateTransects";
     static constexpr const char* splitConcavePolygonsName =   "SplitConcavePolygons";
+    static constexpr const char* tankCapacityName =           "TankCapacity";
 
    signals:
     void refly90DegreesChanged(bool refly90Degrees);
@@ -147,6 +150,7 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     SettingsFact    _gridAngleFact;
     SettingsFact    _flyAlternateTransectsFact;
     SettingsFact    _splitConcavePolygonsFact;
+    SettingsFact    _tankCapacityFact;
     int             _entryPoint;
 
     static constexpr const char* _jsonGridAngleKey =          "angle";
@@ -154,6 +158,7 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
 
     static constexpr const char* _jsonV3GridObjectKey =                   "grid";
     static constexpr const char* _jsonV3GridAltitudeKey =                 "altitude";
+    // static constexpr const char* _jsonTankCapacityKey =                   "tankCapacity";
     static constexpr const char* _jsonV3GridAltitudeRelativeKey =         "relativeAltitude";
     static constexpr const char* _jsonV3GridAngleKey =                    "angle";
     static constexpr const char* _jsonV3GridSpacingKey =                  "spacing";

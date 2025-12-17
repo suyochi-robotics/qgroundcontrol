@@ -42,6 +42,7 @@ TransectStyleComplexItemEditor {
                 onUpdated:              angleSlider.value = missionItem.gridAngle.value
             }
 
+
             QGCSlider {
                 id:                     angleSlider
                 from:           0
@@ -55,6 +56,11 @@ TransectStyleComplexItemEditor {
                 Component.onCompleted:  value = missionItem.gridAngle.value
                 live: true
             }
+            // QGCLabel {  text: qsTr("Tank Capacity")  }
+            // FactTextField {
+            //     fact:             missionItem.tankCapacity
+            //     Layout.fillWidth: true
+            // }
 
             QGCLabel {
                 text:       qsTr("Turnaround dist")
