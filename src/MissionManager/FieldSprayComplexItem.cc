@@ -34,7 +34,8 @@ FieldSprayComplexItem::FieldSprayComplexItem(PlanMasterController* masterControl
       , _gridAngleFact            (settingsGroup, _metaDataMap[gridAngleName])
       , _flyAlternateTransectsFact(settingsGroup, _metaDataMap[flyAlternateTransectsName])
       , _splitConcavePolygonsFact (settingsGroup, _metaDataMap[splitConcavePolygonsName])
-      // , _tankCapacityFact         (settingsGroup, _metaDataMap[tankCapacityName])
+      , _tankCapacityFact         (settingsGroup, _metaDataMap[tankCapacityName])
+      , _flowRateFact             (settingsGroup, _metaDataMap[flowRateName])
       , _entryPoint               (EntryLocationTopLeft)
 {
     _editorQml = "qrc:/qml/QGroundControl/Controls/FieldSprayItemEditor.qml";
@@ -52,7 +53,8 @@ FieldSprayComplexItem::FieldSprayComplexItem(PlanMasterController* masterControl
     connect(&_gridAngleFact,            &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
     connect(&_flyAlternateTransectsFact,&Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
     connect(&_splitConcavePolygonsFact, &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
-    // connect(&_tankCapacityFact,         &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
+    connect(&_tankCapacityFact,         &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
+    connect(&_flowRateFact,             &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
     connect(this,                       &FieldSprayComplexItem::refly90DegreesChanged,  this, &FieldSprayComplexItem::_setDirty);
 
     connect(&_gridAngleFact,            &Fact::valueChanged,                        this, &FieldSprayComplexItem::_rebuildTransects);
@@ -97,7 +99,8 @@ void FieldSprayComplexItem::_saveCommon(QJsonObject& saveObject)
     saveObject[_jsonGridAngleKey] =                             _gridAngleFact.rawValue().toDouble();
     saveObject[_jsonFlyAlternateTransectsKey] =                 _flyAlternateTransectsFact.rawValue().toBool();
     saveObject[_jsonSplitConcavePolygonsKey] =                  _splitConcavePolygonsFact.rawValue().toBool();
-    // saveObject[_jsonTankCapacityKey] =                          _tankCapacityFact.rawValue().toDouble();
+    saveObject[_jsonTankCapacityKey] =                          _tankCapacityFact.rawValue().toDouble();
+    saveObject[_jsonFlowRateKey] =                              _flowRateFact.rawValue().toDouble();
     saveObject[_jsonEntryPointKey] =                            _entryPoint;
 
             // Polygon shape
@@ -206,8 +209,8 @@ bool FieldSprayComplexItem::_loadV4V5(const QJsonObject& complexObject, int sequ
 
     _gridAngleFact.setRawValue              (complexObject[_jsonGridAngleKey].toDouble());
     _flyAlternateTransectsFact.setRawValue  (complexObject[_jsonFlyAlternateTransectsKey].toBool(false));
-    // _tankCapacityFact.setRawValue           (complexObject[_jsonTankCapacityKey].toDouble());
-
+    _tankCapacityFact.setRawValue           (complexObject[_jsonTankCapacityKey].toDouble());
+    _flowRateFact.setRawValue               (complexObject[_jsonFlowRateKey].toDouble());
     if (version == 5) {
         _splitConcavePolygonsFact.setRawValue   (complexObject[_jsonSplitConcavePolygonsKey].toBool(true));
     }
