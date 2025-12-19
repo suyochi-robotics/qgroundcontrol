@@ -27,13 +27,13 @@
                 "comment":      "Although this setting is here, the code for it is disabled since it was not working."
             },
             {
-              "name": "TankCapacity",
-              "type": "double",
-              "units": "L",
-              "min": 1,
-              "max": 100,
-              "decimalPlaces": 1,
-              "default": 20
+              "name":           "TankCapacity",
+              "type":           "double",
+              "units":          "L",
+              "min":            1,
+              "max":            100,
+              "decimalPlaces":  1,
+              "default":        20
             },
             {
             "name":             "FlowRate",
@@ -44,6 +44,38 @@
             "max":              8.0,
             "decimalPlaces":    1,
             "default":          8.0
+            },
+            {
+            "name":             "FlightSpeed",
+            "shortDesc":        "Flight speed during spraying.",
+            "type":             "double",
+            "units":            "m/s",
+            "min":              1.0,
+            "max":              15.0,
+            "decimalPlaces":    1,
+            "default":          10.0
+            },
+            {
+            "name":             "SprayEntireMission",
+            "shortDesc":        "If true, attempt to spray entire mission path in one flight.",
+            "type":             "bool",
+            "default":          false
+            },
+            {
+            "name":             "SprayPathToCover",
+            "shortDesc":        "Distance (m) that can be sprayed with current tank (auto-calculated).",
+            "type":             "double",
+            "units":            "m",
+            "min":              0.0,
+            "max":              99999.0,
+            "decimalPlaces":    1,
+            "default":          0.0
+            },
+            {
+            "name":             "SprayDuringTurn",
+            "shortDesc":        "If true, spray while taking turn between transects.",
+            "type":             "bool",
+            "default":          false
             }
         ]
     }

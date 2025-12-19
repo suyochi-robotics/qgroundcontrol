@@ -66,6 +66,26 @@ TransectStyleComplexItemEditor {
                 fact:             missionItem.flowRate
                 Layout.fillWidth: true
             }
+            QGCLabel {  text: qsTr("Flight Speed")  }
+            FactTextField {
+                fact:             missionItem.flightSpeed
+                Layout.fillWidth: true
+            }
+            QGCLabel {  text: qsTr("SprayEntireMission")  }
+            FactTextField {
+                fact:             missionItem.sprayEntireMission
+                Layout.fillWidth: true
+            }
+            QGCLabel {  text: qsTr("SprayPathToCover")  }
+            FactTextField {
+                fact:             missionItem.sprayPathToCover
+                Layout.fillWidth: true
+            }
+            QGCLabel {  text: qsTr("SprayDuringTurn")  }
+            FactTextField {
+                fact:             missionItem.sprayDuringTurn
+                Layout.fillWidth: true
+            }
 
             QGCLabel {
                 text:       qsTr("Turnaround dist")

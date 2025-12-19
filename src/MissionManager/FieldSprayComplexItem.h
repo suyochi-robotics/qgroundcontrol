@@ -34,12 +34,19 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     Q_PROPERTY(QGeoCoordinate   centerCoordinate       READ centerCoordinate       WRITE setCenterCoordinate)
     Q_PROPERTY(Fact*            tankCapacity           READ tankCapacity           CONSTANT)
     Q_PROPERTY(Fact*            flowRate               READ flowRate               CONSTANT)
+    Q_PROPERTY(Fact*            flightSpeed            READ flightSpeed            CONSTANT)
+    Q_PROPERTY(Fact*            sprayEntireMission     READ sprayEntireMission     CONSTANT)
+    Q_PROPERTY(Fact*            sprayDuringTurn        READ sprayDuringTurn        CONSTANT)
 
     Fact* gridAngle             (void) { return &_gridAngleFact; }
     Fact* flyAlternateTransects (void) { return &_flyAlternateTransectsFact; }
     Fact* splitConcavePolygons  (void) { return &_splitConcavePolygonsFact; }
     Fact* tankCapacity          (void) { return &_tankCapacityFact; }
     Fact* flowRate              (void) { return &_flowRateFact; }
+    Fact* flightSpeed           (void) { return &_flightSpeedFact; }
+    Fact* sprayEntireMission    (void) { return &_sprayEntireMissionFact; }
+    Fact* sprayDuringTurn       (void) { return &_sprayDuringTurnFact; }
+
 
     Q_INVOKABLE void rotateEntryPoint(void);
 
@@ -88,6 +95,10 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     static constexpr const char* splitConcavePolygonsName =   "SplitConcavePolygons";
     static constexpr const char* tankCapacityName =           "TankCapacity";
     static constexpr const char* flowRateName =               "FlowRate";
+    static constexpr const char* flightSpeedName =            "FlightSpeed";
+    static constexpr const char* sprayEntireMissionName =     "SprayEntireMission";
+    static constexpr const char* sprayPathToCoverName =       "SprayPathToCover";
+    static constexpr const char* sprayDuringTurnName =        "SprayDuringTurn";
    signals:
     void refly90DegreesChanged(bool refly90Degrees);
 
@@ -154,6 +165,10 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     SettingsFact    _splitConcavePolygonsFact;
     SettingsFact    _tankCapacityFact;
     SettingsFact    _flowRateFact;
+    SettingsFact    _flightSpeedFact;
+    SettingsFact    _sprayEntireMissionFact;
+    SettingsFact    _sprayPathToCoverFact;
+    SettingsFact    _sprayDuringTurnFact;
     int             _entryPoint;
 
     static constexpr const char* _jsonGridAngleKey =          "angle";
@@ -163,6 +178,10 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     static constexpr const char* _jsonV3GridAltitudeKey =                 "altitude";
     static constexpr const char* _jsonTankCapacityKey =                   "tankCapacity";
     static constexpr const char* _jsonFlowRateKey =                       "flowRate";
+    static constexpr const char* _jsonFlightSpeedKey =                    "flightSpeed";
+    static constexpr const char* _jsonSprayEntireMissionKey =             "sprayEntireMission";
+    static constexpr const char* _jsonSprayDuringTurnKey =                "sprayDuringTurn";
+    static constexpr const char* _jsonSprayPathToCoverKey =               "sprayPathToCover";
     static constexpr const char* _jsonV3GridAltitudeRelativeKey =         "relativeAltitude";
     static constexpr const char* _jsonV3GridAngleKey =                    "angle";
     static constexpr const char* _jsonV3GridSpacingKey =                  "spacing";
