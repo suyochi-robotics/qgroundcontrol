@@ -100,7 +100,7 @@ SetupPage {
                 loader.servoReverseFact = controller.getParameterFact(-1, rcPrefix + "REVERSED")
             }
 
-            /// Gimbal output channels are stored in SERVO#_FUNCTION parameters. We need to loop through those
+            // / Gimbal output channels are stored in SERVO#_FUNCTION parameters. We need to loop through those
             /// to find them and setup the ui accordindly.
             function calcGimbalOutValues() {
                 gimbalDirectionTiltLoader.gimbalOutIndex = 0

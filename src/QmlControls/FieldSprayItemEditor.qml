@@ -86,7 +86,6 @@ TransectStyleComplexItemEditor {
                 fact:             missionItem.sprayDuringTurn
                 Layout.fillWidth: true
             }
-
             QGCLabel {
                 text:       qsTr("Turnaround dist")
                 visible:    !forPresets

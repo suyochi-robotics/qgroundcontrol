@@ -275,7 +275,6 @@ Rectangle {
                     visible:            missionItem.speedSection.available
                 }
             }
-
             CameraSection {
                 checked:    missionItem.cameraSection.settingsSpecified
                 visible:    missionItem.cameraSection.available
