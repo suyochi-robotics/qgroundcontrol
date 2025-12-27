@@ -40,6 +40,7 @@ FieldSprayComplexItem::FieldSprayComplexItem(PlanMasterController* masterControl
       , _sprayEntireMissionFact   (settingsGroup, _metaDataMap[sprayEntireMissionName])
       , _sprayPathToCoverFact     (settingsGroup, _metaDataMap[sprayPathToCoverName])
       , _sprayDuringTurnFact      (settingsGroup, _metaDataMap[sprayDuringTurnName])
+      , _numberOfTanksFact        (settingsGroup, _metaDataMap[numberOfTanksName])
       , _entryPoint               (EntryLocationTopLeft)
 {
     _editorQml = "qrc:/qml/QGroundControl/Controls/FieldSprayItemEditor.qml";
@@ -62,6 +63,7 @@ FieldSprayComplexItem::FieldSprayComplexItem(PlanMasterController* masterControl
     connect(&_flightSpeedFact,          &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
     connect(&_sprayEntireMissionFact,   &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
     connect(&_sprayDuringTurnFact,      &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
+    connect(&_numberOfTanksFact,        &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
     connect(this,                       &FieldSprayComplexItem::refly90DegreesChanged,  this, &FieldSprayComplexItem::_setDirty);
 
     connect(&_gridAngleFact,            &Fact::valueChanged,                        this, &FieldSprayComplexItem::_rebuildTransects);
@@ -111,6 +113,7 @@ void FieldSprayComplexItem::_saveCommon(QJsonObject& saveObject)
     saveObject[_jsonSprayEntireMissionKey] =                    _sprayEntireMissionFact.rawValue().toDouble();
     saveObject[_jsonSprayPathToCoverKey] =                      _sprayPathToCoverFact.rawValue().toDouble();
     saveObject[_jsonSprayDuringTurnKey] =                       _sprayDuringTurnFact.rawValue().toDouble();
+    saveObject[_jsonNumberOfTanksKey] =                         _numberOfTanksFact.rawValue().toDouble();
     saveObject[_jsonEntryPointKey] =                            _entryPoint;
 
             // Polygon shape
@@ -225,6 +228,7 @@ bool FieldSprayComplexItem::_loadV4V5(const QJsonObject& complexObject, int sequ
     _sprayEntireMissionFact.setRawValue (complexObject[_jsonSprayEntireMissionKey].toDouble());
     _sprayPathToCoverFact.setRawValue       (complexObject[_jsonSprayPathToCoverKey].toDouble());
     _sprayDuringTurnFact.setRawValue        (complexObject[_jsonSprayDuringTurnKey].toDouble());
+    _numberOfTanksFact.setRawValue          (complexObject[_jsonNumberOfTanksKey].toInteger());
     if (version == 5) {
         _splitConcavePolygonsFact.setRawValue   (complexObject[_jsonSplitConcavePolygonsKey].toBool(true));
     }

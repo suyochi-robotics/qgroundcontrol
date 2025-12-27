@@ -37,6 +37,7 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     Q_PROPERTY(Fact*            flightSpeed            READ flightSpeed            CONSTANT)
     Q_PROPERTY(Fact*            sprayEntireMission     READ sprayEntireMission     CONSTANT)
     Q_PROPERTY(Fact*            sprayDuringTurn        READ sprayDuringTurn        CONSTANT)
+    Q_PROPERTY(Fact*            numberOfTanks          READ numberOfTanks          CONSTANT)
 
     Fact* gridAngle             (void) { return &_gridAngleFact; }
     Fact* flyAlternateTransects (void) { return &_flyAlternateTransectsFact; }
@@ -46,6 +47,7 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     Fact* flightSpeed           (void) { return &_flightSpeedFact; }
     Fact* sprayEntireMission    (void) { return &_sprayEntireMissionFact; }
     Fact* sprayDuringTurn       (void) { return &_sprayDuringTurnFact; }
+    Fact* numberOfTanks         (void) { return &_numberOfTanksFact; }
 
 
     Q_INVOKABLE void rotateEntryPoint(void);
@@ -99,6 +101,7 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     static constexpr const char* sprayEntireMissionName =     "SprayEntireMission";
     static constexpr const char* sprayPathToCoverName =       "SprayPathToCover";
     static constexpr const char* sprayDuringTurnName =        "SprayDuringTurn";
+    static constexpr const char* numberOfTanksName =          "NumberOfTanks";
    signals:
     void refly90DegreesChanged(bool refly90Degrees);
 
@@ -169,6 +172,7 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     SettingsFact    _sprayEntireMissionFact;
     SettingsFact    _sprayPathToCoverFact;
     SettingsFact    _sprayDuringTurnFact;
+    SettingsFact    _numberOfTanksFact;
     int             _entryPoint;
 
     static constexpr const char* _jsonGridAngleKey =          "angle";
@@ -207,4 +211,5 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     static constexpr const char* _jsonV3Refly90DegreesKey =               "refly90Degrees";
     static constexpr const char* _jsonFlyAlternateTransectsKey =          "flyAlternateTransects";
     static constexpr const char* _jsonSplitConcavePolygonsKey =           "splitConcavePolygons";
+    static constexpr const char* _jsonNumberOfTanksKey =                  "numberOfTanks";
 };

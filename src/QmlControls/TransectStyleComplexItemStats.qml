@@ -8,10 +8,13 @@ import QGroundControl.Controls
 // Statistics section for TransectStyleComplexItems
 Grid {
     // The following properties must be available up the hierarchy chain
-    //property var    missionItem       ///< Mission Item for editor
+    // property var    missionItem       ///< Mission Item for editor
 
     columns:        2
     columnSpacing:  ScreenTools.defaultFontPixelWidth
+
+    QGCLabel { text: qsTr("Number of Tanks") }
+    QGCLabel { text: missionItem.numberOfTanks}
 
     QGCLabel { text: qsTr("Survey Area") }
     QGCLabel { text: QGroundControl.unitsConversion.squareMetersToAppSettingsAreaUnits(missionItem.coveredArea).toFixed(2) + " " + QGroundControl.unitsConversion.appSettingsAreaUnitsString }

@@ -76,6 +76,12 @@
             "shortDesc":        "If true, spray while taking turn between transects.",
             "type":             "bool",
             "default":          false
+            },
+            {
+            "name":             "NumberOfTanks",
+            "shortDesc":        "number of tanks as per the path",
+            "type":             "Double",
+            "default":          1
             }
         ]
     }
