@@ -44,6 +44,8 @@ void VisualMissionItem::_commonInit(void)
         connect(&_updateTerrainTimer, &QTimer::timeout, this, &VisualMissionItem::_reallyUpdateTerrainAltitude);
 
         connect(this, &VisualMissionItem::coordinateChanged, this, &VisualMissionItem::_updateTerrainAltitude);
+
+        _controllerVehicle->getFactGroup("flowSensor")->getFact("flowRate");
     }
 }
 

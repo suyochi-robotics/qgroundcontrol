@@ -36,7 +36,7 @@
               "default":        20
             },
             {
-            "name":             "FlowRate",
+            "name":             "FlowRateSettings",
             "shortDesc":        "Liquid flow rate.",
             "type":             "double",
             "units":            "L/min",

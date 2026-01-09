@@ -4,6 +4,8 @@ import QtQuick.Controls
 import QGroundControl
 import QGroundControl.ScreenTools
 import QGroundControl.Controls
+import QGroundControl.FactSystem
+import QGroundControl.FactControls
 
 // Statistics section for TransectStyleComplexItems
 Grid {
@@ -14,7 +16,9 @@ Grid {
     columnSpacing:  ScreenTools.defaultFontPixelWidth
 
     QGCLabel { text: qsTr("Number of Tanks") }
-    QGCLabel { text: missionItem.numberOfTanks}
+    FactLabel {
+        fact: missionItem.numberOfTanks
+    }
 
     QGCLabel { text: qsTr("Survey Area") }
     QGCLabel { text: QGroundControl.unitsConversion.squareMetersToAppSettingsAreaUnits(missionItem.coveredArea).toFixed(2) + " " + QGroundControl.unitsConversion.appSettingsAreaUnitsString }

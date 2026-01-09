@@ -14,6 +14,10 @@ class VehicleFlowSensorFactGroup : public FactGroup
 public:
     explicit VehicleFlowSensorFactGroup(QObject* parent = nullptr);
 
+    static constexpr const char* _flowSensorFactGroupName = "flowSensor";
+    static constexpr const char* _flowRateFactName        = "flowRate";
+    static constexpr const char* _pulseCountFactName      = "pulseCount";
+
     Fact* flowRate()   { return &_flowRateFact; }
     Fact* pulseCount() { return &_pulseCountFact; }
 
@@ -27,6 +31,9 @@ public:
 private:
 
     void _handleFlowSensor(const mavlink_message_t& message);
+
+
+
     
     Fact _flowRateFact = Fact(0, QStringLiteral("flowRate"), FactMetaData::valueTypeDouble);
     Fact _pulseCountFact = Fact(0, QStringLiteral("pulseCount"), FactMetaData::valueTypeUint32);

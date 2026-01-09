@@ -33,17 +33,18 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     Q_PROPERTY(Fact*            splitConcavePolygons   READ splitConcavePolygons   CONSTANT)
     Q_PROPERTY(QGeoCoordinate   centerCoordinate       READ centerCoordinate       WRITE setCenterCoordinate)
     Q_PROPERTY(Fact*            tankCapacity           READ tankCapacity           CONSTANT)
-    Q_PROPERTY(Fact*            flowRate               READ flowRate               CONSTANT)
+    Q_PROPERTY(Fact*            flowRateSettings       READ flowRateSettings       CONSTANT)
     Q_PROPERTY(Fact*            flightSpeed            READ flightSpeed            CONSTANT)
     Q_PROPERTY(Fact*            sprayEntireMission     READ sprayEntireMission     CONSTANT)
     Q_PROPERTY(Fact*            sprayDuringTurn        READ sprayDuringTurn        CONSTANT)
     Q_PROPERTY(Fact*            numberOfTanks          READ numberOfTanks          CONSTANT)
 
+
     Fact* gridAngle             (void) { return &_gridAngleFact; }
     Fact* flyAlternateTransects (void) { return &_flyAlternateTransectsFact; }
     Fact* splitConcavePolygons  (void) { return &_splitConcavePolygonsFact; }
     Fact* tankCapacity          (void) { return &_tankCapacityFact; }
-    Fact* flowRate              (void) { return &_flowRateFact; }
+    Fact* flowRateSettings      (void) { return &_flowRateSettingsFact; }
     Fact* flightSpeed           (void) { return &_flightSpeedFact; }
     Fact* sprayEntireMission    (void) { return &_sprayEntireMissionFact; }
     Fact* sprayDuringTurn       (void) { return &_sprayDuringTurnFact; }
@@ -62,7 +63,7 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     bool            isSurveyItem        (void) const final { return true; }
     QGeoCoordinate  centerCoordinate    (void) const { return _surveyAreaPolygon.center(); }
     void            setCenterCoordinate (const QGeoCoordinate& coordinate) { _surveyAreaPolygon.setCenter(coordinate); }
-
+    
             // Overrides from TransectStyleComplexItem
     void    save                (QJsonArray&  planItems) final;
     bool    specifiesCoordinate (void) const final { return true; }
@@ -96,7 +97,7 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     static constexpr const char* flyAlternateTransectsName =  "FlyAlternateTransects";
     static constexpr const char* splitConcavePolygonsName =   "SplitConcavePolygons";
     static constexpr const char* tankCapacityName =           "TankCapacity";
-    static constexpr const char* flowRateName =               "FlowRate";
+    static constexpr const char* flowRateSettingsName =       "FlowRateSettings";
     static constexpr const char* flightSpeedName =            "FlightSpeed";
     static constexpr const char* sprayEntireMissionName =     "SprayEntireMission";
     static constexpr const char* sprayPathToCoverName =       "SprayPathToCover";
@@ -107,7 +108,7 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
 
    private slots:
     void _updateWizardMode              (void);
-
+    void _onVehicleFlowRateChanged(void);
             // Overrides from TransectStyleComplexItem
     void _rebuildTransectsPhase1        (void) final;
     void _recalcCameraShots             (void) final;
@@ -119,6 +120,7 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
         CameraTriggerOff,
         CameraTriggerHoverAndCapture
     };
+    Fact* flowRateFact(void);
 
     QPointF _rotatePoint(const QPointF& point, const QPointF& origin, double angle);
     void _intersectLinesWithRect(const QList<QLineF>& lineList, const QRectF& boundRect, QList<QLineF>& resultLines);
@@ -167,7 +169,7 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     SettingsFact    _flyAlternateTransectsFact;
     SettingsFact    _splitConcavePolygonsFact;
     SettingsFact    _tankCapacityFact;
-    SettingsFact    _flowRateFact;
+    SettingsFact    _flowRateSettingsFact;
     SettingsFact    _flightSpeedFact;
     SettingsFact    _sprayEntireMissionFact;
     SettingsFact    _sprayPathToCoverFact;
@@ -175,13 +177,13 @@ class FieldSprayComplexItem : public TransectStyleComplexItem
     SettingsFact    _numberOfTanksFact;
     int             _entryPoint;
 
-    static constexpr const char* _jsonGridAngleKey =          "angle";
-    static constexpr const char* _jsonEntryPointKey =         "entryLocation";
+    static constexpr const char* _jsonGridAngleKey =                      "angle";
+    static constexpr const char* _jsonEntryPointKey =                     "entryLocation";
 
     static constexpr const char* _jsonV3GridObjectKey =                   "grid";
     static constexpr const char* _jsonV3GridAltitudeKey =                 "altitude";
     static constexpr const char* _jsonTankCapacityKey =                   "tankCapacity";
-    static constexpr const char* _jsonFlowRateKey =                       "flowRate";
+    static constexpr const char* _jsonFlowRateSettingsKey =               "flowRateSettings";
     static constexpr const char* _jsonFlightSpeedKey =                    "flightSpeed";
     static constexpr const char* _jsonSprayEntireMissionKey =             "sprayEntireMission";
     static constexpr const char* _jsonSprayDuringTurnKey =                "sprayDuringTurn";

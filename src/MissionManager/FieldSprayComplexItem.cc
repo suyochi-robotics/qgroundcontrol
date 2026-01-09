@@ -35,7 +35,7 @@ FieldSprayComplexItem::FieldSprayComplexItem(PlanMasterController* masterControl
       , _flyAlternateTransectsFact(settingsGroup, _metaDataMap[flyAlternateTransectsName])
       , _splitConcavePolygonsFact (settingsGroup, _metaDataMap[splitConcavePolygonsName])
       , _tankCapacityFact         (settingsGroup, _metaDataMap[tankCapacityName])
-      , _flowRateFact             (settingsGroup, _metaDataMap[flowRateName])
+      , _flowRateSettingsFact     (settingsGroup, _metaDataMap[flowRateSettingsName])
       , _flightSpeedFact          (settingsGroup, _metaDataMap[flightSpeedName])
       , _sprayEntireMissionFact   (settingsGroup, _metaDataMap[sprayEntireMissionName])
       , _sprayPathToCoverFact     (settingsGroup, _metaDataMap[sprayPathToCoverName])
@@ -59,7 +59,7 @@ FieldSprayComplexItem::FieldSprayComplexItem(PlanMasterController* masterControl
     connect(&_flyAlternateTransectsFact,&Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
     connect(&_splitConcavePolygonsFact, &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
     connect(&_tankCapacityFact,         &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
-    connect(&_flowRateFact,             &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
+    connect(&_flowRateSettingsFact,     &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
     connect(&_flightSpeedFact,          &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
     connect(&_sprayEntireMissionFact,   &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
     connect(&_sprayDuringTurnFact,      &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
@@ -108,7 +108,7 @@ void FieldSprayComplexItem::_saveCommon(QJsonObject& saveObject)
     saveObject[_jsonFlyAlternateTransectsKey] =                 _flyAlternateTransectsFact.rawValue().toBool();
     saveObject[_jsonSplitConcavePolygonsKey] =                  _splitConcavePolygonsFact.rawValue().toBool();
     saveObject[_jsonTankCapacityKey] =                          _tankCapacityFact.rawValue().toDouble();
-    saveObject[_jsonFlowRateKey] =                              _flowRateFact.rawValue().toDouble();
+    saveObject[_jsonFlowRateSettingsKey] =                      _flowRateSettingsFact.rawValue().toDouble();
     saveObject[_jsonFlightSpeedKey] =                           _flightSpeedFact.rawValue().toDouble();
     saveObject[_jsonSprayEntireMissionKey] =                    _sprayEntireMissionFact.rawValue().toDouble();
     saveObject[_jsonSprayPathToCoverKey] =                      _sprayPathToCoverFact.rawValue().toDouble();
@@ -223,9 +223,9 @@ bool FieldSprayComplexItem::_loadV4V5(const QJsonObject& complexObject, int sequ
     _gridAngleFact.setRawValue              (complexObject[_jsonGridAngleKey].toDouble());
     _flyAlternateTransectsFact.setRawValue  (complexObject[_jsonFlyAlternateTransectsKey].toBool(false));
     _tankCapacityFact.setRawValue           (complexObject[_jsonTankCapacityKey].toDouble());
-    _flowRateFact.setRawValue               (complexObject[_jsonFlowRateKey].toDouble());
+    _flowRateSettingsFact.setRawValue       (complexObject[_jsonFlowRateSettingsKey].toDouble());
     _flightSpeedFact.setRawValue            (complexObject[_jsonFlightSpeedKey].toDouble());
-    _sprayEntireMissionFact.setRawValue (complexObject[_jsonSprayEntireMissionKey].toDouble());
+    _sprayEntireMissionFact.setRawValue     (complexObject[_jsonSprayEntireMissionKey].toDouble());
     _sprayPathToCoverFact.setRawValue       (complexObject[_jsonSprayPathToCoverKey].toDouble());
     _sprayDuringTurnFact.setRawValue        (complexObject[_jsonSprayDuringTurnKey].toDouble());
     _numberOfTanksFact.setRawValue          (complexObject[_jsonNumberOfTanksKey].toInteger());
@@ -1389,5 +1389,36 @@ void FieldSprayComplexItem::_updateWizardMode(void)
 {
     if (_surveyAreaPolygon.isValid() && !_surveyAreaPolygon.traceMode()) {
         setWizardMode(false);
+    }
+}
+
+Fact* FieldSprayComplexItem::flowRateFact(void)
+{
+    if (!_controllerVehicle) {
+        return nullptr;
+    }
+
+    FactGroup* flowGroup =
+        _controllerVehicle->getFactGroup(VehicleFlowSensorFactGroup::_flowSensorFactGroupName);
+
+    if (!flowGroup) {
+        return nullptr;
+    }
+
+    return flowGroup->getFact(VehicleFlowSensorFactGroup::_flowRateFactName);
+}
+
+void FieldSprayComplexItem::_onVehicleFlowRateChanged(void)
+{
+    Fact* vehicleFlowRate = flowRateFact();
+    if (!vehicleFlowRate) {
+        return;
+    }
+
+    const QVariant value = vehicleFlowRate->rawValue();
+
+    // Prevent unnecessary churn
+    if (_flowRateSettingsFact.rawValue() != value) {
+        _flowRateSettingsFact.setRawValue(value);
     }
 }
