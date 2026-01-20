@@ -55,6 +55,18 @@ FieldSprayComplexItem::FieldSprayComplexItem(PlanMasterController* masterControl
         _cameraCalc.distanceToSurface()->setRawValue(SettingsManager::instance()->appSettings()->defaultMissionItemAltitude()->rawValue());
     }
 
+    if (_controllerVehicle) {
+        Fact* flowRate = flowRateFact();
+
+        if (flowRate) {
+            connect(
+                flowRate,
+                &Fact::valueChanged,
+                this,
+                &FieldSprayComplexItem::_onVehicleFlowRateChanged
+                );
+        }
+    }
     connect(&_gridAngleFact,            &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
     connect(&_flyAlternateTransectsFact,&Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
     connect(&_splitConcavePolygonsFact, &Fact::valueChanged,                        this, &FieldSprayComplexItem::_setDirty);
@@ -1402,7 +1414,7 @@ Fact* FieldSprayComplexItem::flowRateFact(void)
         _controllerVehicle->getFactGroup(VehicleFlowSensorFactGroup::_flowSensorFactGroupName);
 
     if (!flowGroup) {
-        return nullptr;
+        return nullptr; 
     }
 
     return flowGroup->getFact(VehicleFlowSensorFactGroup::_flowRateFactName);
@@ -1410,12 +1422,12 @@ Fact* FieldSprayComplexItem::flowRateFact(void)
 
 void FieldSprayComplexItem::_onVehicleFlowRateChanged(void)
 {
-    Fact* vehicleFlowRate = flowRateFact();
-    if (!vehicleFlowRate) {
+    Fact* flowRate = flowRateFact();
+    if (!flowRate) {
         return;
     }
 
-    const QVariant value = vehicleFlowRate->rawValue();
+    const QVariant value = flowRate->rawValue();
 
     // Prevent unnecessary churn
     if (_flowRateSettingsFact.rawValue() != value) {
