@@ -11,6 +11,8 @@ qt_add_qml_module(ToolbarModule
         EscIndicatorPage.qml
         FlightModeIndicator.qml
         FlightModeMenuIndicator.qml
+        FlowIndicator.qml
+        FlowIndicatorPage.qml
         FlyViewToolBar.qml
         FlyViewToolBarIndicators.qml
         GCSControlIndicator.qml
@@ -95,6 +97,7 @@ qt_add_resources(${CMAKE_PROJECT_NAME} toolbar_qmlimages
         "${CMAKE_SOURCE_DIR}/src/Toolbar/Images/TelemRSSI.svg"
         "${CMAKE_SOURCE_DIR}/src/Toolbar/Images/TrackingIcon.svg"
         "${CMAKE_SOURCE_DIR}/src/Toolbar/Images/Yield.svg"
+        "${CMAKE_SOURCE_DIR}/src/Toolbar/Images/flow.svg"
 )
 
 qt_add_resources(${CMAKE_PROJECT_NAME} toolbar_gcscontrol_resources

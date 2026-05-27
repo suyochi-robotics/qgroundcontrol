@@ -25,6 +25,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         VehicleGeneratorFactGroup.h
         VehicleFactGroup.cc
         VehicleFactGroup.h
+        VehicleFlowSensorFactGroup.cc
+        VehicleFlowSensorFactGroup.h
         VehicleGPS2FactGroup.cc
         VehicleGPS2FactGroup.h
         VehicleGPSFactGroup.cc
@@ -60,6 +62,7 @@ set(JSON_FILES
     LocalPositionFact.json
     EstimatorStatusFactGroup.json
     EFIFact.json
+    FlowSensorFactGroup.json
     BatteryFact.json
     ClockFact.json
     SubmarineFact.json
