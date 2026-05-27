@@ -8,6 +8,7 @@
 #include "VehicleDistanceSensorFactGroup.h"
 #include "VehicleEFIFactGroup.h"
 #include "VehicleEstimatorStatusFactGroup.h"
+#include "VehicleFlowSensorFactGroup.h"
 #include "VehicleGeneratorFactGroup.h"
 #include "VehicleGPS2FactGroup.h"
 #include "VehicleGPSFactGroup.h"
@@ -328,6 +329,8 @@ void Vehicle::_commonInit(LinkInterface* link)
     _radioStatusFactGroup           = new RadioStatusFactGroup(this);
     _batteryFactGroupListModel      = new BatteryFactGroupListModel(this);
     _escStatusFactGroupListModel    = new EscStatusFactGroupListModel(this);
+    _flowSensorFactGroup            = new VehicleFlowSensorFactGroup(this);
+
 
     if (!_offlineEditingVehicle) {
         _terrainProtocolHandler = new TerrainProtocolHandler(this, _terrainFactGroup, this);
@@ -360,6 +363,7 @@ void Vehicle::_commonInit(LinkInterface* link)
     _addFactGroup(_rpmFactGroup,               _rpmFactGroupName);
     _addFactGroup(_terrainFactGroup,           _terrainFactGroupName);
     _addFactGroup(_radioStatusFactGroup,       _radioStatusFactGroupName);
+    _addFactGroup(_flowSensorFactGroup,        _flowSensorFactGroupName);
 
     // Add firmware-specific fact groups, if provided
     QMap<QString, FactGroup*>* fwFactGroups = _firmwarePlugin->factGroups();
@@ -426,6 +430,7 @@ FactGroup* Vehicle::generatorFactGroup()            { return _generatorFactGroup
 FactGroup* Vehicle::efiFactGroup()                  { return _efiFactGroup; }
 FactGroup* Vehicle::rpmFactGroup()                  { return _rpmFactGroup; }
 FactGroup* Vehicle::radioStatusFactGroup()          { return _radioStatusFactGroup; }
+FactGroup* Vehicle::flowSensorFactGroup()           { return _flowSensorFactGroup; }
 
 QmlObjectListModel* Vehicle::batteries()            { return _batteryFactGroupListModel; }
 QmlObjectListModel* Vehicle::escs()                 { return _escStatusFactGroupListModel; }
@@ -3281,8 +3286,8 @@ void Vehicle::_handleControlStatus(const mavlink_message_t& message)
         updateControlStatusSignals = true;
     }
 
-    if (_sysid_in_control != controlStatus.sysid_in_control) {
-        _sysid_in_control = controlStatus.sysid_in_control;
+    if (_sysid_in_control != controlStatus.gcs_main) {
+        _sysid_in_control = controlStatus.gcs_main;
         updateControlStatusSignals = true;
     }
 
