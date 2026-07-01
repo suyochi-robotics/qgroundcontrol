@@ -44,7 +44,7 @@ target_include_directories(${CMAKE_PROJECT_NAME}
     PRIVATE
         ${mavlink_SOURCE_DIR}
         ${mavlink_SOURCE_DIR}/all
-        ${mavlink_SOURCE_DIR}/common
+        ${mavlink_SOURCE_DIR}/suyochi_common
         ${mavlink_SOURCE_DIR}/development
 )
 

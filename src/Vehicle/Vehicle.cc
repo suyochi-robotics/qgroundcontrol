@@ -50,6 +50,7 @@
 #include "VehicleBatteryFactGroup.h"
 #include "VehicleLinkManager.h"
 #include "VehicleObjectAvoidance.h"
+#include "VehicleFlowSensorFactGroup.h"
 #include "VideoManager.h"
 #include "VideoSettings.h"
 #include "DeviceInfo.h"
@@ -118,6 +119,7 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _rpmFactGroup                 (this)
     , _terrainFactGroup             (this)
     , _terrainProtocolHandler       (new TerrainProtocolHandler(this, &_terrainFactGroup, this))
+    , _flowSensorFactGroup          (this)
 {
     connect(JoystickManager::instance(), &JoystickManager::activeJoystickChanged, this, &Vehicle::_loadJoystickSettings);
     connect(MultiVehicleManager::instance(), &MultiVehicleManager::activeVehicleChanged, this, &Vehicle::_activeVehicleChanged);
@@ -219,6 +221,7 @@ Vehicle::Vehicle(MAV_AUTOPILOT              firmwareType,
     , _distanceSensorFactGroup          (this)
     , _localPositionFactGroup           (this)
     , _localPositionSetpointFactGroup   (this)
+    , _flowSensorFactGroup              (this)
 {
     // This will also set the settings based firmware/vehicle types. So it needs to happen first.
     if (_firmwareType == MAV_AUTOPILOT_TRACK) {
@@ -338,6 +341,7 @@ void Vehicle::_commonInit()
     _addFactGroup(&_efiFactGroup,               _efiFactGroupName);
     _addFactGroup(&_rpmFactGroup,               _rpmFactGroupName);
     _addFactGroup(&_terrainFactGroup,           _terrainFactGroupName);
+    _addFactGroup(&_flowSensorFactGroup,        _flowSensorFactGroupName);
 
     // Add firmware-specific fact groups, if provided
     QMap<QString, FactGroup*>* fwFactGroups = _firmwarePlugin->factGroups();
@@ -4109,8 +4113,8 @@ void Vehicle::_handleControlStatus(const mavlink_message_t& message)
         updateControlStatusSignals = true;
     }
 
-    if (_sysid_in_control != controlStatus.sysid_in_control) {
-        _sysid_in_control = controlStatus.sysid_in_control;
+    if (_sysid_in_control != controlStatus.gcs_main) {
+        _sysid_in_control = controlStatus.gcs_main;
         updateControlStatusSignals = true;
     }
 
