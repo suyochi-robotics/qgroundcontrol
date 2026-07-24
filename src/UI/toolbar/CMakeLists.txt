@@ -23,5 +23,7 @@ qt_add_qml_module(ToolbarModule
         VehicleGPSIndicator.qml
         FlowIndicator.qml
         FlowIndicatorPage.qml
-    NO_PLUGIN # Required by Qt 6.6.3. TODO: Remove when no longer supported.
+        DistanceIndicator.qml
+        DistanceIndicatorPage.qml
+    NO_PLUGIN
 )
