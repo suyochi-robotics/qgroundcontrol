@@ -24,6 +24,7 @@
 #include <QtCore/QMetaType>
 #include <QtCore/QSettings>
 #include <QtCore/QStandardPaths>
+#include "suyochi/mavlink_msg_flow_sensor.h"
 
 QGC_LOGGING_CATEGORY(MAVLinkProtocolLog, "qgc.comms.mavlinkprotocol")
 
@@ -116,7 +117,9 @@ void MAVLinkProtocol::receiveBytes(LinkInterface *link, const QByteArray &data)
         mavlink_status_t status{};
 
         if (mavlink_parse_char(mavlinkChannel, byte, &message, &status) != MAVLINK_FRAMING_OK) {
-            continue;
+            if (message.msgid != MAVLINK_MSG_ID_FLOW_SENSOR) {
+                continue;
+            }
         }
 
         _updateVersion(link, mavlinkChannel);

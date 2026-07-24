@@ -1836,6 +1836,8 @@
         <value code="2000">Camera Trigger</value>
         <value code="2032">Camera Capture</value>
         <value code="2064">PPS Input</value>
+        <value code="2070">RPM Input</value>
+        <value code="2071">Flow Sensor</value>
       </values>
     </parameter>
     <parameter name="PWM_AUX_FUNC10" default="0" type="INT32">
@@ -1892,6 +1894,8 @@
         <value code="2000">Camera Trigger</value>
         <value code="2032">Camera Capture</value>
         <value code="2064">PPS Input</value>
+        <value code="2070">RPM Input</value>
+        <value code="2071">Flow Sensor</value>
       </values>
     </parameter>
     <parameter name="PWM_AUX_FUNC11" default="0" type="INT32">
@@ -1948,6 +1952,8 @@
         <value code="2000">Camera Trigger</value>
         <value code="2032">Camera Capture</value>
         <value code="2064">PPS Input</value>
+        <value code="2070">RPM Input</value>
+        <value code="2071">Flow Sensor</value>
       </values>
     </parameter>
     <parameter name="PWM_AUX_FUNC2" default="0" type="INT32">
@@ -2004,6 +2010,8 @@
         <value code="2000">Camera Trigger</value>
         <value code="2032">Camera Capture</value>
         <value code="2064">PPS Input</value>
+        <value code="2070">RPM Input</value>
+        <value code="2071">Flow Sensor</value>
       </values>
     </parameter>
     <parameter name="PWM_AUX_FUNC3" default="0" type="INT32">
@@ -2060,6 +2068,8 @@
         <value code="2000">Camera Trigger</value>
         <value code="2032">Camera Capture</value>
         <value code="2064">PPS Input</value>
+        <value code="2070">RPM Input</value>
+        <value code="2071">Flow Sensor</value>
       </values>
     </parameter>
     <parameter name="PWM_AUX_FUNC4" default="0" type="INT32">
@@ -2116,6 +2126,8 @@
         <value code="2000">Camera Trigger</value>
         <value code="2032">Camera Capture</value>
         <value code="2064">PPS Input</value>
+        <value code="2070">RPM Input</value>
+        <value code="2071">Flow Sensor</value>
       </values>
     </parameter>
     <parameter name="PWM_AUX_FUNC5" default="0" type="INT32">
@@ -2172,6 +2184,8 @@
         <value code="2000">Camera Trigger</value>
         <value code="2032">Camera Capture</value>
         <value code="2064">PPS Input</value>
+        <value code="2070">RPM Input</value>
+        <value code="2071">Flow Sensor</value>
       </values>
     </parameter>
     <parameter name="PWM_AUX_FUNC6" default="0" type="INT32">
@@ -2228,6 +2242,8 @@
         <value code="2000">Camera Trigger</value>
         <value code="2032">Camera Capture</value>
         <value code="2064">PPS Input</value>
+        <value code="2070">RPM Input</value>
+        <value code="2071">Flow Sensor</value>
       </values>
     </parameter>
     <parameter name="PWM_AUX_FUNC7" default="0" type="INT32">
@@ -2284,6 +2300,8 @@
         <value code="2000">Camera Trigger</value>
         <value code="2032">Camera Capture</value>
         <value code="2064">PPS Input</value>
+        <value code="2070">RPM Input</value>
+        <value code="2071">Flow Sensor</value>
       </values>
     </parameter>
     <parameter name="PWM_AUX_FUNC8" default="0" type="INT32">
@@ -2340,6 +2358,8 @@
         <value code="2000">Camera Trigger</value>
         <value code="2032">Camera Capture</value>
         <value code="2064">PPS Input</value>
+        <value code="2070">RPM Input</value>
+        <value code="2071">Flow Sensor</value>
       </values>
     </parameter>
     <parameter name="PWM_AUX_FUNC9" default="0" type="INT32">
@@ -2396,6 +2416,8 @@
         <value code="2000">Camera Trigger</value>
         <value code="2032">Camera Capture</value>
         <value code="2064">PPS Input</value>
+        <value code="2070">RPM Input</value>
+        <value code="2071">Flow Sensor</value>
       </values>
     </parameter>
     <parameter name="PWM_AUX_MAX1" default="2000" type="INT32">
