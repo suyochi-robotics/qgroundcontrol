@@ -11,6 +11,14 @@ ToolIndicatorPage {
 
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
 
+    function formatDistance(distanceFact) {
+        if (!distanceFact || isNaN(distanceFact.value)) {
+            return "--"
+        }
+
+        return distanceFact.valueString + " " + distanceFact.units
+    }
+
     contentComponent: Component {
         ColumnLayout {
             spacing: ScreenTools.defaultFontPixelHeight / 4
@@ -34,7 +42,7 @@ ToolIndicatorPage {
                      delegate: LabelledLabel {
                         label: modelData.label
                         labelText: _activeVehicle && _activeVehicle.distanceSensors && !isNaN(modelData.key.value) ?
-                                       modelData.key.value.toFixed(2) + " m"
+                                       formatDistance(modelData.key)
                                    : "--"
                     }
                 }

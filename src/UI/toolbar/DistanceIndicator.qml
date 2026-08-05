@@ -21,12 +21,12 @@ Item {
 
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
 
-    function formatDistance(valueMeters) {
-        if (isNaN(valueMeters)) {
+    function formatDistance(distanceFact) {
+        if (!distanceFact || isNaN(distanceFact.value)) {
             return "--"
         }
-        var unitStr = QGroundControl.unitsConversion.appSettingsHorizontalDistanceUnitsString
-        return valueMeters.toFixed(2) + " " + unitStr
+
+        return distanceFact.valueString + " " + distanceFact.units
     }
 
     Row {
@@ -55,17 +55,17 @@ Item {
 
             QGCLabel {
                 text: _activeVehicle
-                      ? control.formatDistance(_activeVehicle.distanceSensors.rotationNone.value) + " (Forward)"
+                      ? control.formatDistance(_activeVehicle.distanceSensors.rotationNone) + " (Forward)"
                       : "--"
             }
             QGCLabel {
                 text: control._activeVehicle
-                      ? control.formatDistance(_activeVehicle.distanceSensors.rotationYaw180.value) + " (Rear)"
+                      ? control.formatDistance(_activeVehicle.distanceSensors.rotationYaw180) + " (Rear)"
                       : "--"
             }
             QGCLabel {
                 text: _activeVehicle
-                      ? control.formatDistance(_activeVehicle.distanceSensors.rotationPitch270.value) + " (Down)"
+                      ? control.formatDistance(_activeVehicle.distanceSensors.rotationPitch270) + " (Down)"
                       : "--"
 
             }
