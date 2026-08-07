@@ -20,6 +20,15 @@ Item {
     anchors.bottom: parent.bottom
 
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
+    property bool showIndicator: _activeVehicle && _activeVehicle.distanceSensors &&
+                                 (!isNaN(_activeVehicle.distanceSensors.rotationNone.value) ||
+                                  !isNaN(_activeVehicle.distanceSensors.rotationYaw180.value) ||
+                                  !isNaN(_activeVehicle.distanceSensors.rotationPitch270.value))
+    property var _distanceEntries: _activeVehicle && _activeVehicle.distanceSensors ? [
+        { fact: _activeVehicle.distanceSensors.rotationNone, arrow: "→" },
+        { fact: _activeVehicle.distanceSensors.rotationYaw180, arrow: "←" },
+        { fact: _activeVehicle.distanceSensors.rotationPitch270, arrow: "⇩" }
+    ] : []
 
     function formatDistance(distanceFact) {
         if (!distanceFact || isNaN(distanceFact.value)) {
@@ -53,22 +62,15 @@ Item {
             visible:                _activeVehicle && _activeVehicle.distanceSensors ? true : false  // later bind to sensor available
             spacing:                0
 
-            QGCLabel {
-                text: _activeVehicle
-                      ? control.formatDistance(_activeVehicle.distanceSensors.rotationNone) + " (Forward)"
-                      : "--"
-            }
-            QGCLabel {
-                text: control._activeVehicle
-                      ? control.formatDistance(_activeVehicle.distanceSensors.rotationYaw180) + " (Rear)"
-                      : "--"
-            }
-            QGCLabel {
-                text: _activeVehicle
-                      ? control.formatDistance(_activeVehicle.distanceSensors.rotationPitch270) + " (Down)"
-                      : "--"
+            Repeater {
+                model: control._distanceEntries
 
+                QGCLabel {
+                    visible: !isNaN(modelData.fact.value)
+                    text: control.formatDistance(modelData.fact) + " (" + modelData.arrow + ")"
+                }
             }
+
         }
     }
 

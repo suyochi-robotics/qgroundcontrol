@@ -26,6 +26,14 @@ ToolIndicatorPage {
             SettingsGroupLayout {
                 heading: qsTr("Distance Sensor Debug - All Orientations")
 
+                QGCLabel {
+                    visible: _activeVehicle && !_activeVehicle.flying
+                    color: qgcPal.warningText
+                    text: qsTr("Distance readings may be inaccurate while landed.")
+                    wrapMode: Text.WordWrap
+                    Layout.fillWidth: true
+                }
+
                 Repeater {
                     model: [
                         { key: _activeVehicle.distanceSensors.rotationNone,     label: "Forward" },
