@@ -794,6 +794,8 @@ const QVariantList& PX4FirmwarePlugin::toolIndicators(const Vehicle* vehicle)
                 break;
             }
         }
+
+        _toolIndicatorList.append(QVariant::fromValue(QUrl::fromUserInput("qrc:/qml/QGroundControl/Toolbar/SprayerIndicator.qml")));
     }
 
     return _toolIndicatorList;

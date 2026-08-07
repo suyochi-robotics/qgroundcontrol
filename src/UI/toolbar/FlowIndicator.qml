@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QGroundControl
 
 import QGroundControl.Controls
+import QGroundControl.FactSystem
 import QGroundControl.ScreenTools
 
 Item {
@@ -11,8 +12,14 @@ Item {
     anchors.top:    parent.top
     anchors.bottom: parent.bottom
 
-    property bool showIndicator: true
+    property bool _parametersReady: QGroundControl.multiVehicleManager.parameterReadyVehicleAvailable
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
+
+    FactPanelController { id: controller }
+
+    property Fact _nullFact:        Fact { }
+    property Fact _flowCapEnableFact: _parametersReady && controller.parameterExists(-1, "FLOW_CAP_ENABLE") ? controller.getParameterFact(-1, "FLOW_CAP_ENABLE") : _nullFact
+    property bool showIndicator: _parametersReady && controller.parameterExists(-1, "FLOW_CAP_ENABLE") && _flowCapEnableFact.rawValue === 1
 
     Row {
         id:             flowIndicatorRow
@@ -39,18 +46,10 @@ Item {
             spacing:                0
 
            QGCLabel {
-               anchors.horizontalCenter: flowValue.horizontalCenter
                color: qgcPal.buttonText
                text: _activeVehicle && !isNaN(_activeVehicle.flowSensor.flowRate.value)
                      ? _activeVehicle.flowSensor.flowRate.value.toFixed(2)
                      : "--"
-            }
-
-            QGCLabel {
-               id: flowValue
-               color: qgcPal.buttonText
-               text: _activeVehicle && !isNaN(_activeVehicle.flowSensor.pulseCount.value)
-                     ? _activeVehicle.flowSensor.pulseCount.value.toFixed(0):"--"
             }
         }
     }
