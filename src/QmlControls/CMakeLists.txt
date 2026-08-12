@@ -196,6 +196,7 @@ qt_add_qml_module(QGroundControlControlsModule
         SimpleItemMapVisual.qml
         StructureScanEditor.qml
         StructureScanMapVisual.qml
+        SprayItemEditor.qml
         SurveyItemEditor.qml
         SurveyMapVisual.qml
         TakeoffItemMapVisual.qml

@@ -107,6 +107,8 @@ private slots:
     void _updateHomePosition                    (const QGeoCoordinate& homePosition);
 
 private:
+    bool _suppressCameraSectionForSpray(void) const;
+
     Vehicle*        _managerVehicle =                   nullptr;
     QGeoCoordinate  _plannedHomePositionCoordinate;     // Does not include altitude
     Fact            _plannedHomePositionAltitudeFact;

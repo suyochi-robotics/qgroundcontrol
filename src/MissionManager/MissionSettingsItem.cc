@@ -50,6 +50,7 @@ MissionSettingsItem::MissionSettingsItem(PlanMasterController* masterController,
     connect(&_cameraSection,    &CameraSection::specifiedGimbalYawChanged,              this, &MissionSettingsItem::specifiedGimbalYawChanged);
     connect(&_cameraSection,    &CameraSection::specifiedGimbalPitchChanged,            this, &MissionSettingsItem::specifiedGimbalPitchChanged);
     connect(&_speedSection,     &SpeedSection::specifiedFlightSpeedChanged,             this, &MissionSettingsItem::specifiedFlightSpeedChanged);
+    connect(_missionController, &MissionController::containsOnlySprayComplexItemsChanged, this, &MissionSettingsItem::_setDirtyAndUpdateLastSequenceNumber);
     connect(this,               &MissionSettingsItem::coordinateChanged,                this, &MissionSettingsItem::_amslEntryAltChanged);
     connect(this,               &MissionSettingsItem::amslEntryAltChanged,              this, &MissionSettingsItem::amslExitAltChanged);
     connect(this,               &MissionSettingsItem::amslEntryAltChanged,              this, &MissionSettingsItem::minAMSLAltitudeChanged);
@@ -65,7 +66,9 @@ int MissionSettingsItem::lastSequenceNumber(void) const
 {
     int lastSequenceNumber = _sequenceNumber;
 
-    lastSequenceNumber += _cameraSection.itemCount();
+    if (!_suppressCameraSectionForSpray()) {
+        lastSequenceNumber += _cameraSection.itemCount();
+    }
     lastSequenceNumber += _speedSection.itemCount();
 
     return lastSequenceNumber;
@@ -147,7 +150,9 @@ void MissionSettingsItem::appendMissionItems(QList<MissionItem*>& items, QObject
                                         missionItemParent);
     items.append(item);
 
-    _cameraSection.appendSectionItems(items, missionItemParent, seqNum);
+    if (!_suppressCameraSectionForSpray()) {
+        _cameraSection.appendSectionItems(items, missionItemParent, seqNum);
+    }
     _speedSection.appendSectionItems(items, missionItemParent, seqNum);
 }
 
@@ -245,12 +250,17 @@ void MissionSettingsItem::_sectionDirtyChanged(bool dirty)
 
 double MissionSettingsItem::specifiedGimbalYaw(void)
 {
-    return _cameraSection.specifyGimbal() ? _cameraSection.gimbalYaw()->rawValue().toDouble() : std::numeric_limits<double>::quiet_NaN();
+    return !_suppressCameraSectionForSpray() && _cameraSection.specifyGimbal() ? _cameraSection.gimbalYaw()->rawValue().toDouble() : std::numeric_limits<double>::quiet_NaN();
 }
 
 double MissionSettingsItem::specifiedGimbalPitch(void)
 {
-    return _cameraSection.specifyGimbal() ? _cameraSection.gimbalPitch()->rawValue().toDouble() : std::numeric_limits<double>::quiet_NaN();
+    return !_suppressCameraSectionForSpray() && _cameraSection.specifyGimbal() ? _cameraSection.gimbalPitch()->rawValue().toDouble() : std::numeric_limits<double>::quiet_NaN();
+}
+
+bool MissionSettingsItem::_suppressCameraSectionForSpray(void) const
+{
+    return _missionController && _missionController->containsOnlySprayComplexItems();
 }
 
 void MissionSettingsItem::_updateAltitudeInCoordinate(QVariant value)

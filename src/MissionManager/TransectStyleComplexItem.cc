@@ -132,10 +132,12 @@ void TransectStyleComplexItem::_save(QJsonObject& complexObject)
 
     innerObject[JsonHelper::jsonVersionKey] =       2;
     innerObject[turnAroundDistanceName] =           _turnAroundDistanceFact.rawValue().toDouble();
-    innerObject[cameraTriggerInTurnAroundName] =    _cameraTriggerInTurnAroundFact.rawValue().toBool();
-    innerObject[hoverAndCaptureName] =              _hoverAndCaptureFact.rawValue().toBool();
-    innerObject[refly90DegreesName] =               _refly90DegreesFact.rawValue().toBool();
-    innerObject[_jsonCameraShotsKey] =              _cameraShots;
+    if (_hasCameraData()) {
+        innerObject[cameraTriggerInTurnAroundName] = _cameraTriggerInTurnAroundFact.rawValue().toBool();
+        innerObject[hoverAndCaptureName] =          _hoverAndCaptureFact.rawValue().toBool();
+        innerObject[refly90DegreesName] =           _refly90DegreesFact.rawValue().toBool();
+        innerObject[_jsonCameraShotsKey] =          _cameraShots;
+    }
 
     if (_cameraCalc.distanceMode() == QGroundControlQmlGlobal::AltitudeModeCalcAboveTerrain) {
         innerObject[terrainAdjustToleranceName]         = _terrainAdjustToleranceFact.rawValue().toDouble();
@@ -144,9 +146,11 @@ void TransectStyleComplexItem::_save(QJsonObject& complexObject)
         innerObject[_jsonTerrainFlightSpeed]            = _vehicleSpeed;
     }
 
-    QJsonObject cameraCalcObject;
-    _cameraCalc.save(cameraCalcObject);
-    innerObject[_jsonCameraCalcKey] = cameraCalcObject;
+    if (_hasCameraData()) {
+        QJsonObject cameraCalcObject;
+        _cameraCalc.save(cameraCalcObject);
+        innerObject[_jsonCameraCalcKey] = cameraCalcObject;
+    }
 
     QJsonValue  transectPointsJson;
 
@@ -216,16 +220,17 @@ bool TransectStyleComplexItem::_load(const QJsonObject& complexObject, bool forP
         return false;
     }
 
+    const bool hasCameraData = _hasCameraData();
     QList<JsonHelper::KeyValidateInfo> innerKeyInfoList = {
         { JsonHelper::jsonVersionKey,       QJsonValue::Double, true },
         { turnAroundDistanceName,           QJsonValue::Double, true },
-        { cameraTriggerInTurnAroundName,    QJsonValue::Bool,   true },
-        { hoverAndCaptureName,              QJsonValue::Bool,   true },
-        { refly90DegreesName,               QJsonValue::Bool,   true },
-        { _jsonCameraCalcKey,               QJsonValue::Object, true },
+        { cameraTriggerInTurnAroundName,    QJsonValue::Bool,   hasCameraData },
+        { hoverAndCaptureName,              QJsonValue::Bool,   hasCameraData },
+        { refly90DegreesName,               QJsonValue::Bool,   hasCameraData },
+        { _jsonCameraCalcKey,               QJsonValue::Object, hasCameraData },
         { _jsonVisualTransectPointsKey,     QJsonValue::Array,  !forPresets },
         { _jsonItemsKey,                    QJsonValue::Array,  !forPresets },
-        { _jsonCameraShotsKey,              QJsonValue::Double, true },
+        { _jsonCameraShotsKey,              QJsonValue::Double, hasCameraData },
     };
     if (!JsonHelper::validateKeys(innerObject, innerKeyInfoList, errorString)) {
         return false;
@@ -254,9 +259,11 @@ bool TransectStyleComplexItem::_load(const QJsonObject& complexObject, bool forP
         }
     }
 
-    // Load CameraCalc data
-    if (!_cameraCalc.load(innerObject[_jsonCameraCalcKey].toObject(), v1FollowTerrain, errorString, forPresets)) {
-        return false;
+    if (hasCameraData && innerObject.contains(_jsonCameraCalcKey)) {
+        // Load CameraCalc data
+        if (!_cameraCalc.load(innerObject[_jsonCameraCalcKey].toObject(), v1FollowTerrain, errorString, forPresets)) {
+            return false;
+        }
     }
 
     // Load TransectStyleComplexItem individual values

@@ -90,7 +90,7 @@ void SurveyComplexItem::_saveCommon(QJsonObject& saveObject)
 
     saveObject[JsonHelper::jsonVersionKey] =                    5;
     saveObject[VisualMissionItem::jsonTypeKey] =                VisualMissionItem::jsonTypeComplexItemValue;
-    saveObject[ComplexMissionItem::jsonComplexItemTypeKey] =    jsonComplexItemTypeValue;
+    saveObject[ComplexMissionItem::jsonComplexItemTypeKey] =    _complexItemType();
     saveObject[_jsonGridAngleKey] =                             _gridAngleFact.rawValue().toDouble();
     saveObject[_jsonFlyAlternateTransectsKey] =                 _flyAlternateTransectsFact.rawValue().toBool();
     saveObject[_jsonSplitConcavePolygonsKey] =                  _splitConcavePolygonsFact.rawValue().toBool();
@@ -98,6 +98,7 @@ void SurveyComplexItem::_saveCommon(QJsonObject& saveObject)
 
     // Polygon shape
     _surveyAreaPolygon.saveToJson(saveObject);
+    _saveExtra(saveObject);
 }
 
 void SurveyComplexItem::loadPreset(const QString& name)
@@ -179,7 +180,7 @@ bool SurveyComplexItem::_loadV4V5(const QJsonObject& complexObject, int sequence
 
     QString itemType = complexObject[VisualMissionItem::jsonTypeKey].toString();
     QString complexType = complexObject[ComplexMissionItem::jsonComplexItemTypeKey].toString();
-    if (itemType != VisualMissionItem::jsonTypeComplexItemValue || complexType != jsonComplexItemTypeValue) {
+    if (itemType != VisualMissionItem::jsonTypeComplexItemValue || complexType != _complexItemType()) {
         errorString = tr("%1 does not support loading this complex mission item type: %2:%3").arg(qgcApp()->applicationName()).arg(itemType).arg(complexType);
         return false;
     }
@@ -208,6 +209,11 @@ bool SurveyComplexItem::_loadV4V5(const QJsonObject& complexObject, int sequence
     }
 
     _entryPoint = complexObject[_jsonEntryPointKey].toInt();
+
+    if (!_loadExtra(complexObject, errorString)) {
+        _ignoreRecalc = false;
+        return false;
+    }
 
     _ignoreRecalc = false;
 
@@ -622,6 +628,11 @@ bool SurveyComplexItem::_hasTurnaround(void) const
     return _turnAroundDistance() > 0;
 }
 
+double SurveyComplexItem::_transectSpacing(void) const
+{
+    return _cameraCalc.adjustedFootprintSide()->rawValue().toDouble();
+}
+
 double SurveyComplexItem::_turnaroundDistance(void) const
 {
     return _turnAroundDistanceFact.rawValue().toDouble();
@@ -673,7 +684,7 @@ void SurveyComplexItem::_rebuildTransectsPhase1WorkerSinglePolygon(bool refly)
     // Generate transects
 
     double gridAngle = _gridAngleFact.rawValue().toDouble();
-    double gridSpacing = _cameraCalc.adjustedFootprintSide()->rawValue().toDouble();
+    double gridSpacing = _transectSpacing();
     if (gridSpacing < 0.5) {
         // We can't let gridSpacing get too small otherwise we will end up with too many transects.
         // So we limit to 0.5 meter spacing as min and set to huge value which will cause a single
@@ -1082,7 +1093,7 @@ void SurveyComplexItem::_rebuildTransectsFromPolygon(bool refly, const QPolygonF
     // Generate transects
 
     double gridAngle = _gridAngleFact.rawValue().toDouble();
-    double gridSpacing = _cameraCalc.adjustedFootprintSide()->rawValue().toDouble();
+    double gridSpacing = _transectSpacing();
 
     gridAngle = _clampGridAngle90(gridAngle);
     gridAngle += refly ? 90 : 0;

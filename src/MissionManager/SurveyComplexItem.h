@@ -40,27 +40,27 @@ public:
     Q_INVOKABLE void rotateEntryPoint(void);
 
     // Overrides from ComplexMissionItem
-    QString         patternName         (void) const final { return name; }
-    bool            load                (const QJsonObject& complexObject, int sequenceNumber, QString& errorString) final;
-    QString         mapVisualQML        (void) const final { return QStringLiteral("SurveyMapVisual.qml"); }
+    QString         patternName         (void) const override { return name; }
+    bool            load                (const QJsonObject& complexObject, int sequenceNumber, QString& errorString) override;
+    QString         mapVisualQML        (void) const override { return QStringLiteral("SurveyMapVisual.qml"); }
     QString         presetsSettingsGroup(void) { return settingsGroup; }
     void            savePreset          (const QString& name);
     void            loadPreset          (const QString& name);
-    bool            isSurveyItem        (void) const final { return true; }
+    bool            isSurveyItem        (void) const override { return true; }
     QGeoCoordinate  centerCoordinate    (void) const { return _surveyAreaPolygon.center(); }
     void            setCenterCoordinate (const QGeoCoordinate& coordinate) { _surveyAreaPolygon.setCenter(coordinate); }
 
     // Overrides from TransectStyleComplexItem
-    void    save                (QJsonArray&  planItems) final;
-    bool    specifiesCoordinate (void) const final { return true; }
-    double  timeBetweenShots    (void) final;
+    void    save                (QJsonArray&  planItems) override;
+    bool    specifiesCoordinate (void) const override { return true; }
+    double  timeBetweenShots    (void) override;
 
     // Overrides from VisualMissionionItem
-    QString             commandDescription  (void) const final { return tr("Survey"); }
-    QString             commandName         (void) const final { return tr("Survey"); }
-    QString             abbreviation        (void) const final { return tr("S"); }
-    ReadyForSaveState   readyForSaveState    (void) const final;
-    double              additionalTimeDelay (void) const final;
+    QString             commandDescription  (void) const override { return tr("Survey"); }
+    QString             commandName         (void) const override { return tr("Survey"); }
+    QString             abbreviation        (void) const override { return tr("S"); }
+    ReadyForSaveState   readyForSaveState    (void) const override;
+    double              additionalTimeDelay (void) const override;
 
     // Must match json spec for GridEntryLocation
     enum EntryLocation {
@@ -90,8 +90,16 @@ private slots:
     void _updateWizardMode              (void);
 
     // Overrides from TransectStyleComplexItem
-    void _rebuildTransectsPhase1        (void) final;
-    void _recalcCameraShots             (void) final;
+    void _rebuildTransectsPhase1        (void) override;
+    void _recalcCameraShots             (void) override;
+
+protected:
+    virtual QString _complexItemType(void) const { return QString::fromLatin1(jsonComplexItemTypeValue); }
+    virtual void _saveExtra(QJsonObject&) const {}
+    virtual bool _loadExtra(const QJsonObject&, QString&) { return true; }
+
+    // The spacing source is virtual so non-camera transect styles can share Survey geometry.
+    virtual double _transectSpacing(void) const;
 
 private:
     enum CameraTriggerCode {

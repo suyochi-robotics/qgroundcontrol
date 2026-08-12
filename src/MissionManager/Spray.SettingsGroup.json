@@ -1,0 +1,42 @@
+{
+    "version": 1,
+    "fileType": "FactMetaData",
+    "QGC.MetaData.Facts": [
+        {
+            "name": "Altitude",
+            "shortDesc": "Spray altitude.",
+            "type": "double",
+            "units": "m",
+            "min": 0.5,
+            "max": 1000,
+            "decimalPlaces": 1,
+            "default": 4
+        },
+        {
+            "name": "Spacing",
+            "shortDesc": "Distance between spray transects.",
+            "type": "double",
+            "units": "m",
+            "min": 0.5,
+            "max": 1000,
+            "decimalPlaces": 1,
+            "default": 4
+        },
+        {
+            "name": "FlowRate",
+            "shortDesc": "Spray flow rate used for the volume estimate.",
+            "type": "double",
+            "units": "L/min",
+            "min": 0,
+            "max": 10000,
+            "decimalPlaces": 2,
+            "default": 1
+        },
+        {
+            "name": "SprayAroundTurns",
+            "shortDesc": "Keep spraying while flying turnarounds.",
+            "type": "bool",
+            "default": false
+        }
+    ]
+}
