@@ -27,16 +27,17 @@ Item {
     FactPanelController { id: controller }
 
     property Fact _nullFact:          Fact { }
-    property Fact _sprayModeFact:     _parametersReady && controller.parameterExists(-1, "SPRAY_EN_MODE") ? controller.getParameterFact(-1, "SPRAY_EN_MODE") : _nullFact
+    property Fact _sprayEnableFact:   _parametersReady && controller.parameterExists(-1, "SPRAY_ENABLE") ? controller.getParameterFact(-1, "SPRAY_ENABLE") : _nullFact
     property Fact _sprayManualFact:   _parametersReady && controller.parameterExists(-1, "SPRAY_EN_MAN") ? controller.getParameterFact(-1, "SPRAY_EN_MAN") : _nullFact
     property Fact _pumpSpeedFact:     _parametersReady && controller.parameterExists(-1, "PUMP_EXP_SPD") ? controller.getParameterFact(-1, "PUMP_EXP_SPD") : _nullFact
     property Fact _sprayerSpeedFact:  _parametersReady && controller.parameterExists(-1, "SPRYAER_EXP_SPD") ? controller.getParameterFact(-1, "SPRYAER_EXP_SPD") : _nullFact
 
     property bool showIndicator: _parametersReady &&
-                                 controller.parameterExists(-1, "SPRAY_EN_MODE") &&
+                                 _sprayEnableFact.rawValue > 0 &&
+                                 controller.parameterExists(-1, "SPRAY_EN_MAN") &&
                                  controller.parameterExists(-1, "PUMP_EXP_SPD") &&
-                                 controller.parameterExists(-1, "SPRYAER_EXP_SPD") &&
-                                 _sprayModeFact.rawValue > 0
+                                 controller.parameterExists(-1, "SPRYAER_EXP_SPD")
+
 
     function clamp(value, minimum, maximum) {
         return Math.max(minimum, Math.min(maximum, value))
@@ -60,7 +61,7 @@ Item {
         source:                 "/qmlimages/Spray.svg"
         fillMode:               Image.PreserveAspectFit
         sourceSize.height:      height
-        color:                  _sprayManualFact.rawValue === 1 ? qgcPal.colorGreen : qgcPal.buttonText
+        color:                  _sprayEnableFact.rawValue === 1 ? qgcPal.colorGreen : qgcPal.buttonText
     }
 
     QGCMouseArea {
@@ -86,7 +87,7 @@ Item {
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: ScreenTools.defaultFontPixelWidth
-                    visible: _sprayModeFact.rawValue === 4 && controller.parameterExists(-1, "SPRAY_EN_MAN")
+                    visible: _sprayEnableFact.rawValue > 0
 
                     QGCButton {
                         Layout.fillWidth: true

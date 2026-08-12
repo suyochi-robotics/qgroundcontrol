@@ -74,7 +74,7 @@ public:
     int _transectCount(void) const { return _transects.count(); }
 
     // Overrides from ComplexMissionItem
-    int     lastSequenceNumber  (void) const final;
+    virtual int lastSequenceNumber  (void) const;
     QString mapVisualQML        (void) const override = 0;
     bool    load                (const QJsonObject& complexObject, int sequenceNumber, QString& errorString) override = 0;
     void    addKMLVisuals       (KMLPlanDomDocument& domDocument) final;
@@ -137,6 +137,7 @@ protected slots:
 protected:
     virtual void _rebuildTransectsPhase1    (void) = 0; ///< Rebuilds the _transects array
     virtual void _recalcCameraShots         (void) = 0;
+    virtual bool _hasCameraData             (void) const { return true; }
 
     void    _save                           (QJsonObject& saveObject);
     bool    _load                           (const QJsonObject& complexObject, bool forPresets, QString& errorString);
@@ -150,7 +151,7 @@ protected:
     void    _appendConditionGate            (QList<MissionItem*>& items, QObject* missionItemParent, int& seqNum, MAV_FRAME mavFrame, const QGeoCoordinate& coordinate);
     void    _appendCameraTriggerDistance    (QList<MissionItem*>& items, QObject* missionItemParent, int& seqNum, float triggerDistance);
     void    _appendCameraTriggerDistanceUpdatePoint(QList<MissionItem*>& items, QObject* missionItemParent, int& seqNum, MAV_FRAME mavFrame, const QGeoCoordinate& coordinate, bool useConditionGate, float triggerDistance);
-    void    _buildAndAppendMissionItems     (QList<MissionItem*>& items, QObject* missionItemParent);
+    virtual void _buildAndAppendMissionItems(QList<MissionItem*>& items, QObject* missionItemParent);
     void    _appendLoadedMissionItems       (QList<MissionItem*>& items, QObject* missionItemParent);
     void    _recalcComplexDistance          (void);
 
